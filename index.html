@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JadiKelas - Ubah PDF Jadi Course Interaktif</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#9333EA', // Purple 600
+                        dark: '#0F172A', // Slate 900
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Soft gradient text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #4F46E5, #9333EA);
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-600 bg-slate-50 antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <i class="ph-bold ph-sparkle text-2xl"></i>
+                    </div>
+                    <span class="font-bold text-2xl text-dark tracking-tight">Jadi<span class="text-primary">Kelas</span></span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#features" class="text-slate-600 hover:text-primary font-medium transition-colors">Fitur</a>
+                    <a href="#how-it-works" class="text-slate-600 hover:text-primary font-medium transition-colors">Cara Kerja</a>
+                    <a href="#target" class="text-slate-600 hover:text-primary font-medium transition-colors">Untuk Siapa</a>
+                    <a href="#" class="font-medium text-slate-600 hover:text-primary transition-colors">Masuk</a>
+                    <a href="#" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-dark focus:outline-none">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#features" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Fitur</a>
+                <a href="#how-it-works" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Cara Kerja</a>
+                <a href="#target" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Untuk Siapa</a>
+                <hr class="my-2 border-slate-100">
+                <a href="#" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-lg">Masuk</a>
+                <a href="#" class="block px-3 py-3 mt-2 text-base font-medium text-center text-white bg-primary rounded-xl">Coba Gratis</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background Decorations -->
+        <div class="absolute top-20 left-0 w-72 h-72 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow"></div>
+        <div class="absolute top-40 right-0 w-72 h-72 bg-secondary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                
+                <!-- Hero Text -->
+                <div class="text-center lg:text-left fade-up">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-primary font-semibold text-sm mb-6">
+                        <i class="ph-fill ph-rocket-launch text-lg"></i>
+                        Platform Pembelajaran AI Generasi Baru
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-dark leading-tight mb-6 tracking-tight">
+                        Ubah Materi Membosankan Jadi <br class="hidden lg:block"/>
+                        <span class="text-gradient">Pembelajaran Interaktif</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Upload PDF atau presentasi Anda, dan biarkan AI kami menyulapnya menjadi *course* modern dengan visual menarik, AI Mentor, dan kuis otomatis dalam hitungan detik.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#" class="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-semibold text-lg shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                            Coba Sekarang <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                        <a href="#how-it-works" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-semibold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-play-circle text-xl"></i> Lihat Demo
+                        </a>
+                    </div>
+                    
+                    </div>
+
+                <!-- Hero Visual (CSS UI Mockup) -->
+                <div class="relative w-full h-[500px] lg:h-[600px] perspective-1000 fade-up" style="transition-delay: 200ms;">
+                    
+                    <!-- Fake PDF Card (Back) -->
+                    <div class="absolute top-10 left-10 w-64 h-80 bg-white border border-slate-200 rounded-xl shadow-lg transform -rotate-6 opacity-60 animate-float-delayed z-0 p-5">
+                        <div class="flex items-center gap-2 mb-4 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 bg-red-100 text-red-500 rounded flex items-center justify-center"><i class="ph-fill ph-file-pdf text-xl"></i></div>
+                            <div class="h-4 w-24 bg-slate-200 rounded"></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-2 w-full bg-slate-200 rounded"></div>
+                            <div class="h-2 w-5/6 bg-slate-200 rounded"></div>
+                            <div class="h-2 w-full bg-slate-200 rounded"></div>
+                            <div class="h-2 w-4/6 bg-slate-200 rounded"></div>
+                            <br>
+                            <div class="h-2 w-full bg-slate-200 rounded"></div>
+                            <div class="h-2 w-3/4 bg-slate-200 rounded"></div>
+                        </div>
+                    </div>
+
+                    <!-- AI Magic Arrow -->
+                    <div class="absolute top-1/2 left-1/4 transform -translate-y-1/2 z-10 w-16 h-16 bg-white rounded-full shadow-xl flex items-center justify-center animate-pulse">
+                        <i class="ph-fill ph-magic-wand text-3xl text-gradient"></i>
+                    </div>
+
+                    <!-- Interactive App Mockup (Front) -->
+                    <div class="absolute top-20 right-0 w-80 lg:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform rotate-2 animate-float z-20">
+                        <!-- Header App -->
+                        <div class="bg-slate-50 border-b border-slate-100 p-4 flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="text-xs font-semibold text-slate-400">Bab 1: Pengantar AI</div>
+                        </div>
+                        
+                        <!-- Content App -->
+                        <div class="p-5">
+                            <!-- Video/Image placeholder -->
+                            <div class="w-full h-32 bg-indigo-50 rounded-xl mb-4 relative overflow-hidden group">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform cursor-pointer">
+                                        <i class="ph-fill ph-play text-primary text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="font-bold text-dark text-lg mb-2">Konsep Dasar Machine Learning</h3>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-xs font-medium text-slate-500 mb-1">
+                                    <span>Progress Belajar</span>
+                                    <span class="text-primary font-bold">65%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full w-[65%]"></div>
+                                </div>
+                            </div>
+
+                            <!-- Mini Quiz UI -->
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mt-4">
+                                <p class="text-sm font-semibold text-dark mb-3"><i class="ph-bold ph-lightning text-yellow-500 mr-1"></i> Quick Quiz</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3 p-2 bg-white border border-indigo-200 rounded-lg cursor-pointer">
+                                        <div class="w-4 h-4 rounded-full border border-indigo-400 flex items-center justify-center">
+                                            <div class="w-2 h-2 rounded-full bg-primary hidden"></div>
+                                        </div>
+                                        <span class="text-xs text-slate-600 font-medium">Algoritma terawasi</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 bg-indigo-50 border border-primary rounded-lg cursor-pointer">
+                                        <div class="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
+                                            <div class="w-2 h-2 rounded-full bg-primary"></div>
+                                        </div>
+                                        <span class="text-xs text-primary font-bold">Jaringan Saraf Tiruan</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating AI Chat Bubble -->
+                    <div class="absolute bottom-10 right-10 z-30 bg-white p-4 rounded-2xl rounded-br-none shadow-xl border border-slate-100 animate-float" style="animation-delay: 1s;">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-secondary to-pink-500 flex items-center justify-center text-white shrink-0">
+                                <i class="ph-bold ph-robot"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-dark mb-1">AI Mentor</p>
+                                <p class="text-xs text-slate-500">Ada yang belum dipahami dari materi ini? Tanya saya!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="py-20 bg-white" id="problem">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 fade-up">
+                <h2 class="text-primary font-bold tracking-wide uppercase text-sm mb-2">Masalah Saat Ini</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-dark">Kenapa metode belajar tradisional tidak efektif?</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Problem 1 -->
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:border-red-200 transition-colors fade-up" style="transition-delay: 100ms;">
+                    <div class="w-14 h-14 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        <i class="ph-fill ph-file-dashed"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Materi Membosankan</h4>
+                    <p class="text-slate-600 leading-relaxed">File PDF berisi teks panjang tanpa visual membuat pelajar cepat jenuh dan kehilangan fokus dalam 10 menit pertama.</p>
+                </div>
+                <!-- Problem 2 -->
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:border-orange-200 transition-colors fade-up" style="transition-delay: 200ms;">
+                    <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        <i class="ph-fill ph-user-minus"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Satu Arah & Pasif</h4>
+                    <p class="text-slate-600 leading-relaxed">Membaca dokumen statis tidak memberikan *feedback*. Pelajar tidak tahu apakah mereka benar-benar memahami materi.</p>
+                </div>
+                <!-- Problem 3 -->
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors fade-up" style="transition-delay: 300ms;">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-3xl mb-6">
+                        <i class="ph-fill ph-brain"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Sulit Dipahami</h4>
+                    <p class="text-slate-600 leading-relaxed">Konsep rumit sulit dicerna hanya dengan teks. Tanpa analogi visual atau mentor yang bisa ditanya kapan saja.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION SECTION (Before vs After) -->
+    <section class="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16 fade-up">
+                <h2 class="text-indigo-400 font-bold tracking-wide uppercase text-sm mb-2">Solusi JadiKelas</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-6">Evolusi Cara Belajar</h3>
+                <p class="text-slate-400 text-lg">Lihat bagaimana AI mengubah tumpukan teks statis menjadi pengalaman belajar yang imersif.</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 items-center bg-slate-800/50 p-4 sm:p-8 rounded-3xl border border-slate-700 backdrop-blur-sm fade-up">
+                
+                <!-- BEFORE -->
+                <div class="w-full lg:w-5/12 bg-slate-200 rounded-2xl p-6 relative overflow-hidden h-96 grayscale opacity-80">
+                    <div class="absolute top-4 left-4 bg-slate-600 text-white text-xs font-bold px-3 py-1 rounded shadow-md uppercase tracking-wide">Before</div>
+                    <div class="mt-8 space-y-4">
+                        <div class="h-6 w-3/4 bg-slate-300 rounded"></div>
+                        <div class="h-4 w-full bg-slate-300 rounded"></div>
+                        <div class="h-4 w-full bg-slate-300 rounded"></div>
+                        <div class="h-4 w-5/6 bg-slate-300 rounded"></div>
+                        <div class="h-4 w-full bg-slate-300 rounded"></div>
+                        <br>
+                        <div class="h-6 w-1/2 bg-slate-300 rounded"></div>
+                        <div class="h-4 w-full bg-slate-300 rounded"></div>
+                        <div class="h-4 w-4/6 bg-slate-300 rounded"></div>
+                    </div>
+                </div>
+
+                <!-- ARROW -->
+                <div class="w-full lg:w-2/12 flex justify-center py-4 lg:py-0">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="ph-bold ph-arrow-right text-3xl text-white lg:rotate-0 rotate-90"></i>
+                    </div>
+                </div>
+
+                <!-- AFTER -->
+                <div class="w-full lg:w-5/12 bg-white rounded-2xl p-6 relative h-96 shadow-2xl overflow-hidden flex flex-col justify-between">
+                    <div class="absolute top-4 right-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md uppercase tracking-wide animate-pulse">After</div>
+                    
+                    <div>
+                        <h4 class="text-xl font-bold text-dark mb-4 mt-2">Materi Interaktif</h4>
+                        
+                        <!-- Rich Content Fake UI -->
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-1/3 h-20 bg-indigo-100 rounded-lg flex items-center justify-center text-primary text-2xl"><i class="ph-fill ph-image"></i></div>
+                            <div class="w-2/3 space-y-2">
+                                <div class="h-3 w-full bg-slate-100 rounded"></div>
+                                <div class="h-3 w-full bg-slate-100 rounded"></div>
+                                <div class="h-3 w-3/4 bg-slate-100 rounded"></div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Buttons Fake UI -->
+                        <div class="grid grid-cols-2 gap-3 mt-6">
+                            <div class="bg-blue-50 border border-blue-100 p-3 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-blue-100">
+                                <i class="ph-fill ph-play-circle text-blue-500 text-xl"></i>
+                                <span class="text-sm font-semibold text-blue-700">Putar Audio</span>
+                            </div>
+                            <div class="bg-purple-50 border border-purple-100 p-3 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-purple-100">
+                                <i class="ph-fill ph-question text-purple-500 text-xl"></i>
+                                <span class="text-sm font-semibold text-purple-700">Latihan Kuis</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Chat Fake Input -->
+                    <div class="mt-auto bg-slate-50 rounded-lg border border-slate-200 p-2 flex items-center gap-2">
+                        <i class="ph-fill ph-robot text-primary ml-2"></i>
+                        <div class="h-8 flex-1 bg-white border border-slate-200 rounded text-xs text-slate-400 flex items-center px-2">Tanya AI mentor...</div>
+                        <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white"><i class="ph-bold ph-paper-plane-right"></i></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION (Visual Cards) -->
+    <section class="py-24 bg-slate-50" id="features">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 fade-up">
+                <h2 class="text-primary font-bold tracking-wide uppercase text-sm mb-2">Fitur Unggulan</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-dark mb-6">Superpower untuk Materi Anda</h3>
+                <p class="text-slate-600 text-lg">Semua yang Anda butuhkan untuk membuat kelas yang tidak akan pernah dilupakan oleh murid Anda.</p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 text-primary flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-file-arrow-up"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">AI Document Converter</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">Ubah file PDF, DOCX, atau PPTX menjadi format website interaktif secara otomatis dalam hitungan detik.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up" style="transition-delay: 100ms;">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-image-square"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Interactive Visuals</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">AI otomatis mendeteksi konsep rumit dan membuatkan ilustrasi, mind-map, atau summary card visual.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up" style="transition-delay: 200ms;">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 text-blue-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-robot"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">AI Mentor Chat</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">Setiap course dilengkapi asisten AI. Pelajar bisa bertanya spesifik terkait materi kapan saja 24/7.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up" style="transition-delay: 300ms;">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-exam"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Auto Quiz Generator</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">Tidak perlu membuat soal manual. AI membaca konteks materi dan men-generate kuis interaktif di akhir sesi.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up" style="transition-delay: 400ms;">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-100 to-green-100 text-emerald-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-chart-line-up"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Progress Tracking</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">Dashboard analitik bagi kreator untuk melihat bagian mana yang paling sering diulang atau tidak dimengerti pelajar.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 fade-up" style="transition-delay: 500ms;">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-100 to-fuchsia-100 text-purple-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-share-network"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-dark mb-3">Shareable Course Link</h4>
+                    <p class="text-slate-600 leading-relaxed text-sm">Satu klik publish. Bagikan link langsung ke murid tanpa mereka harus mengunduh aplikasi apapun.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-24 bg-white" id="how-it-works">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-20 fade-up">
+                <h2 class="text-primary font-bold tracking-wide uppercase text-sm mb-2">Proses Sederhana</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-dark">Bagaimana JadiKelas Bekerja?</h3>
+            </div>
+
+            <div class="relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -z-10 transform -translate-y-1/2"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center relative z-10">
+                    
+                    <!-- Step 1 -->
+                    <div class="fade-up">
+                        <div class="w-20 h-20 mx-auto bg-white border-4 border-indigo-50 rounded-full flex items-center justify-center shadow-lg mb-6 relative">
+                            <div class="w-16 h-16 bg-gradient-to-br from-primary to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-inner">1</div>
+                        </div>
+                        <h4 class="text-xl font-bold text-dark mb-3">Upload File</h4>
+                        <p class="text-slate-500 text-sm px-4">Unggah materi lama Anda dalam format PDF, PPT, atau DOCX. Mendukung hingga 50 halaman sekaligus.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="fade-up" style="transition-delay: 200ms;">
+                        <div class="w-20 h-20 mx-auto bg-white border-4 border-purple-50 rounded-full flex items-center justify-center shadow-lg mb-6 relative">
+                            <div class="w-16 h-16 bg-gradient-to-br from-secondary to-fuchsia-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-inner">2</div>
+                        </div>
+                        <h4 class="text-xl font-bold text-dark mb-3">AI Memproses</h4>
+                        <p class="text-slate-500 text-sm px-4">AI kami membaca struktur, meringkas poin penting, membuat kuis, dan men-generate UI interaktif.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="fade-up" style="transition-delay: 400ms;">
+                        <div class="w-20 h-20 mx-auto bg-white border-4 border-green-50 rounded-full flex items-center justify-center shadow-lg mb-6 relative">
+                            <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-inner">3</div>
+                        </div>
+                        <h4 class="text-xl font-bold text-dark mb-3">Siap Dibagikan</h4>
+                        <p class="text-slate-500 text-sm px-4">Dapatkan link website untuk course Anda. Murid bisa langsung belajar dari HP atau laptop mereka.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TARGET USER SECTION -->
+    <section class="py-20 bg-slate-50 border-t border-slate-100" id="target">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-up">
+                <h3 class="text-2xl md:text-3xl font-bold text-dark mb-4">Didesain untuk Memaksimalkan Potensi Anda</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- User 1 -->
+                <div class="bg-white p-6 rounded-2xl flex items-start gap-4 border border-slate-100 shadow-sm fade-up">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg text-2xl"><i class="ph-fill ph-student"></i></div>
+                    <div>
+                        <h4 class="font-bold text-dark mb-1">Mahasiswa</h4>
+                        <p class="text-sm text-slate-500">Ubah modul dosen jadi kuis flashcard dan rangkuman yang mudah dipelajari sebelum UTS/UAS.</p>
+                    </div>
+                </div>
+                <!-- User 2 -->
+                <div class="bg-white p-6 rounded-2xl flex items-start gap-4 border border-slate-100 shadow-sm fade-up" style="transition-delay: 100ms;">
+                    <div class="p-3 bg-indigo-50 text-primary rounded-lg text-2xl"><i class="ph-fill ph-chalkboard-teacher"></i></div>
+                    <div>
+                        <h4 class="font-bold text-dark mb-1">Dosen / Guru</h4>
+                        <p class="text-sm text-slate-500">Tingkatkan engagement di kelas. Berikan materi yang bisa berinteraksi dengan murid di luar jam sekolah.</p>
+                    </div>
+                </div>
+                <!-- User 3 -->
+                <div class="bg-white p-6 rounded-2xl flex items-start gap-4 border border-slate-100 shadow-sm fade-up" style="transition-delay: 200ms;">
+                    <div class="p-3 bg-purple-50 text-secondary rounded-lg text-2xl"><i class="ph-fill ph-video-camera"></i></div>
+                    <div>
+                        <h4 class="font-bold text-dark mb-1">Course Creator</h4>
+                        <p class="text-sm text-slate-500">Bangun e-learning atau bootcamp dengan cepat tanpa perlu coding platform LMS dari nol.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="py-20 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-gradient-to-br from-primary via-indigo-600 to-secondary rounded-3xl p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden fade-up">
+                <!-- Decals -->
+                <i class="ph-fill ph-sparkle absolute top-5 right-10 text-white/20 text-6xl animate-pulse"></i>
+                <i class="ph-fill ph-circles-four absolute bottom-5 left-10 text-white/10 text-8xl"></i>
+                
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-6">Siap Mengubah Cara Belajar?</h2>
+                <p class="text-indigo-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+                    Bergabung dengan ribuan pendidik modern. Coba JadiKelas gratis hari ini dan buat course pertama Anda dalam 2 menit.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Mulai Sekarang - Gratis
+                    </button>
+                    <button class="bg-transparent border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all duration-300">
+                        Hubungi Tim Sales
+                    </button>
+                </div>
+                <p class="mt-6 text-sm text-indigo-200">Tidak perlu kartu kredit. Batal kapan saja.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white pt-16 pb-8 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white">
+                            <i class="ph-bold ph-sparkle"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark">Jadi<span class="text-primary">Kelas</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        Platform AI untuk menciptakan masa depan pendidikan yang interaktif, personal, dan tak membosankan.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-indigo-50 transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><i class="ph-fill ph-linkedin-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Produk</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-primary transition-colors">Converter PDF to Course</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">AI Mentor API</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Auto Quiz</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Harga</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Sumber Daya</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Panduan Pengguna</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Studi Kasus</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Perusahaan</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-primary transition-colors">Tentang Kami</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Karir</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privasi & Syarat</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Kontak</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-slate-400">&copy; 2026 JadiKelas. Hak Cipta Dilindungi.</p>
+                <div class="flex items-center gap-2 text-sm text-slate-400">
+                    Dibuat dengan <i class="ph-fill ph-heart text-red-500"></i> untuk Pendidikan Indonesia
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LIGHTWEIGHT JAVASCRIPT -->
+    <script>
+        // 1. Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // 2. Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-sm', 'bg-white/95');
+                navbar.classList.remove('bg-white/80');
+            } else {
+                navbar.classList.remove('shadow-sm', 'bg-white/95');
+                navbar.classList.add('bg-white/80');
+            }
+        });
+
+        // 3. Scroll Reveal Animation (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach((el) => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

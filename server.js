@@ -5,11 +5,14 @@ const PORT = 5526;
 const TARGET_BASE = `/public/index.html`;
 
 app.get("/", (req, res) => {
-    const targetUrl = `${TARGET_BASE}`;
-    return res.redirect(302, targetUrl);
+    res.sendFile(__dirname + "/public/index.html");
 });
 
-app.get("/public/index.html", (req, res) => {
+app.get("/about", (req, res) => {
+    res.sendFile(__dirname + "/public/about/index.html");
+});
+
+app.get("/index.html", (req, res) => {
     res.sendFile(__dirname + "/public/index.html");
 });
 

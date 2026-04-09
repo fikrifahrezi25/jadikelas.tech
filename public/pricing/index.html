@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harga & Paket - JadiKelas</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#9333EA', // Purple 600
+                        dark: '#0F172A', // Slate 900
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles for scroll animation classes */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Soft gradient text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #4F46E5, #9333EA);
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-600 bg-slate-50 antialiased overflow-x-hidden">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <i class="ph-bold ph-graduation-cap text-2xl"></i>
+                    </div>
+                    <span class="font-bold text-2xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="../index.html" class="text-slate-600 hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="../about" class="text-slate-600 hover:text-primary font-medium transition-colors">About</a>
+                    <a href="#" class="text-slate-600 hover:text-primary font-medium transition-colors">Pricing</a>
+                    <a href="../login" class="font-medium text-slate-600 hover:text-primary transition-colors">Masuk</a>
+                    <a href="#" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-dark focus:outline-none">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="../index.html" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Home</a>
+                <a href="../about" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">About</a>
+                <a href="#" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Pricing</a>
+                <hr class="my-2 border-slate-100">
+                <a href="../login" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-lg">Masuk</a>
+                <a href="#" class="block px-3 py-3 mt-2 text-base font-medium text-center text-white bg-primary rounded-xl">Coba Gratis</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO PRICING SECTION -->
+    <section class="relative pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden bg-slate-50">
+        <!-- Background Ornaments -->
+        <div class="absolute top-20 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow"></div>
+        <div class="absolute top-40 left-1/4 w-80 h-80 bg-secondary/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="fade-up max-w-3xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-dark leading-tight mb-6 tracking-tight">
+                    Pilih Paket yang Sesuai dengan <span class="text-gradient">Kebutuhanmu</span>
+                </h1>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed max-w-xl mx-auto">
+                    Mulai gratis, upgrade kapan saja. Bayar sesuai kebutuhanmu tanpa ikatan kontrak yang memberatkan.
+                </p>
+
+                <!-- Pricing Toggle -->
+                <div class="inline-flex items-center p-1.5 bg-slate-200/60 rounded-full border border-slate-200 mb-12 shadow-inner">
+                    <button id="toggle-onetime" class="relative px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 bg-white text-dark shadow-sm ring-1 ring-slate-900/5">
+                        IDR
+                    </button>
+                </div>
+            </div>
+
+            <!-- PRICING CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+                
+                <!-- 1. FREE PLAN -->
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 fade-up relative h-full flex flex-col">
+                    <div class="mb-6">
+                        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="ph-fill ph-paper-plane-tilt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Free</h3>
+                        <div class="text-sm text-slate-500 font-medium px-3 py-1 bg-slate-100 rounded-full inline-block mb-4">Untuk mencoba</div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-dark">Gratis</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-2">Akses dasar selamanya</p>
+                    </div>
+
+                    <div class="space-y-4 mb-8 flex-1">
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">2 Course Gratis</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">Maks. 20 halaman per dokumen</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">Basic AI Mentor</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 px-4 bg-white border border-slate-300 text-dark font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-colors">
+                        Mulai Gratis
+                    </button>
+                </div>
+
+                <!-- 2. STARTER PLAN (HIGHLIGHTED) -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-primary ring-4 ring-primary/10 shadow-2xl scale-105 transform transition-transform hover:scale-110 z-10 fade-up relative h-full flex flex-col" style="transition-delay: 100ms;">
+                    <!-- Badge -->
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-primary to-secondary text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1">
+                        <i class="ph-fill ph-fire text-yellow-300"></i> Paling Populer
+                    </div>
+
+                    <div class="mb-6 mt-2">
+                        <div class="w-12 h-12 bg-indigo-50 text-primary rounded-xl flex items-center justify-center text-2xl mb-4 shadow-inner">
+                            <i class="ph-fill ph-rocket-launch"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Starter</h3>
+                        <div class="text-sm text-primary font-semibold px-3 py-1 bg-indigo-50 rounded-full inline-block mb-4">Pilihan terbaik kreator</div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-dark price-val">Rp 30.000</span>
+                            <span class="text-sm text-slate-500 font-medium price-period">/ sekali</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-2">Cocok untuk tugas & mini project</p>
+                    </div>
+
+                    <div class="space-y-4 mb-8 flex-1">
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-primary mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-700 font-medium">10 Course Interaktif</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-primary mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-700 font-medium">±50 Credit AI</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-primary mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-700 font-medium">Maks. 50 halaman per dokumen</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-primary mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-700 font-medium">AI Mentor Standar</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 px-4 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 transition-all duration-300">
+                        Pilih Paket
+                    </button>
+                </div>
+
+                <!-- 3. PRO PLAN -->
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 fade-up relative h-full flex flex-col" style="transition-delay: 200ms;">
+                    <div class="mb-6">
+                        <div class="w-12 h-12 bg-purple-50 text-secondary rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="ph-fill ph-crown"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Pro</h3>
+                        <div class="text-sm text-purple-600 font-medium px-3 py-1 bg-purple-50 rounded-full inline-block mb-4">Untuk Profesional</div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-dark price-val">Rp 150.000</span>
+                            <span class="text-sm text-slate-500 font-medium price-period">/ sekali</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-2">Daya penuh untuk bisnis & kampus</p>
+                    </div>
+
+                    <div class="space-y-4 mb-8 flex-1">
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">50 Course Interaktif</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">±300 Credit AI</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">Maks. 150 halaman per dokumen</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">AI Mentor Advanced (GPT-4)</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">Custom Theme & Branding</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="ph-bold ph-check text-green-500 mt-0.5 text-lg"></i>
+                            <span class="text-sm text-slate-600">Prioritas Processing (Lebih Cepat)</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 px-4 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors">
+                        Upgrade Sekarang
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CREDIT EXPLANATION SECTION -->
+    <section class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-indigo-50/50 rounded-3xl border border-indigo-100 p-8 md:p-12 fade-up">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- Text Info -->
+                    <div>
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary text-2xl shadow-sm mb-6">
+                            <i class="ph-fill ph-coin"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-dark mb-4">Cara Kerja Credit AI</h2>
+                        <p class="text-slate-600 leading-relaxed mb-6">
+                            Sistem Credit memastikan penggunaan yang adil dan fleksibel. Credit digunakan saat AI memproses dokumen Anda menjadi course, kuis, atau saat murid bertanya pada AI Mentor.
+                        </p>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-indigo-100 text-primary flex items-center justify-center shrink-0 mt-0.5"><i class="ph-bold ph-file-text text-sm"></i></div>
+                                <div>
+                                    <p class="text-sm font-bold text-dark">1 Course = ±5 Credit</p>
+                                    <p class="text-xs text-slate-500">Estimasi untuk dokumen PDF standar (10-15 halaman).</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-purple-100 text-secondary flex items-center justify-center shrink-0 mt-0.5"><i class="ph-bold ph-arrows-out-line-horizontal text-sm"></i></div>
+                                <div>
+                                    <p class="text-sm font-bold text-dark">Semakin panjang dokumen → Semakin banyak credit</p>
+                                    <p class="text-xs text-slate-500">AI perlu membaca lebih banyak teks, sehingga memakan daya lebih tinggi.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 mt-0.5"><i class="ph-bold ph-infinity text-sm"></i></div>
+                                <div>
+                                    <p class="text-sm font-bold text-dark">Tidak Hangus (Khusus Paket Sekali Beli)</p>
+                                    <p class="text-xs text-slate-500">Credit yang Anda beli akan tetap tersimpan hingga habis terpakai.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Visual Illustration (CSS Only) -->
+                    <div class="relative w-full h-[300px] flex items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 animate-float">
+                        <div class="w-full max-w-sm space-y-6">
+                            
+                            <!-- Simulation UI -->
+                            <div class="text-center mb-6">
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Simulasi Penggunaan</h4>
+                                <div class="text-3xl font-extrabold text-dark flex justify-center items-center gap-2">
+                                    <i class="ph-fill ph-coin text-yellow-500"></i> 50 <span class="text-lg text-slate-400 font-medium">Credit Tersisa</span>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar Component -->
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="flex justify-between text-xs font-semibold mb-2">
+                                    <span class="text-slate-600">Dokumen: Biologi Bab 1 (12 Hal)</span>
+                                    <span class="text-red-500 font-bold">- 5 Credit</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden relative">
+                                    <!-- Background filling -->
+                                    <div class="bg-indigo-100 absolute inset-0 w-full h-full"></div>
+                                    <!-- Remaining credit (green) -->
+                                    <div class="bg-gradient-to-r from-emerald-400 to-green-500 h-3 rounded-l-full w-[90%] absolute left-0 top-0 transition-all duration-1000"></div>
+                                    <!-- Used credit (red) -->
+                                    <div class="bg-red-400 h-3 w-[10%] absolute right-0 top-0 animate-pulse"></div>
+                                </div>
+                                <div class="mt-3 flex justify-between text-xs text-slate-400">
+                                    <span>Memproses Kuis...</span>
+                                    <span>Estimasi: 30 detik</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON TABLE SECTION -->
+    <section class="py-20 bg-slate-50" id="compare">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 fade-up">
+                <h2 class="text-3xl font-bold text-dark mb-4">Perbandingan Fitur Lengkap</h2>
+                <p class="text-slate-600">Lihat lebih detail apa saja yang Anda dapatkan di setiap paket.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden fade-up">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50 border-b border-slate-200">
+                                <th class="p-6 font-bold text-dark w-1/3">Fitur</th>
+                                <th class="p-6 font-bold text-dark text-center w-1/5">Free</th>
+                                <th class="p-6 font-bold text-primary text-center w-1/5 bg-indigo-50/30">Starter <i class="ph-fill ph-fire text-yellow-500"></i></th>
+                                <th class="p-6 font-bold text-purple-600 text-center w-1/5">Pro</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="p-4 pl-6 text-slate-600 font-medium">Batas Pembuatan Course</td>
+                                <td class="p-4 text-center text-slate-500">2 Course</td>
+                                <td class="p-4 text-center text-dark font-bold bg-indigo-50/30">10 Course</td>
+                                <td class="p-4 text-center text-dark font-bold">50 Course</td>
+                            </tr>
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="p-4 pl-6 text-slate-600 font-medium">Credit AI (Estimasi)</td>
+                                <td class="p-4 text-center text-slate-500">Terbatas</td>
+                                <td class="p-4 text-center text-dark font-bold bg-indigo-50/30">±50 Credit</td>
+                                <td class="p-4 text-center text-dark font-bold">±300 Credit</td>
+                            </tr>
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="p-4 pl-6 text-slate-600 font-medium">Maks. Halaman per Dokumen</td>
+                                <td class="p-4 text-center text-slate-500">20 Halaman</td>
+                                <td class="p-4 text-center text-dark font-bold bg-indigo-50/30">50 Halaman</td>
+                                <td class="p-4 text-center text-dark font-bold">150 Halaman</td>
+                            </tr>
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="p-4 pl-6 text-slate-600 font-medium">Kualitas AI Mentor</td>
+                                <td class="p-4 text-center text-slate-500">Basic (GPT-3.5)</td>
+                                <td class="p-4 text-center text-dark font-bold bg-indigo-50/30">Standar</td>
+                                <td class="p-4 text-center text-dark font-bold">Advanced (GPT-4)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="py-20 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-gradient-to-br from-primary via-indigo-600 to-secondary rounded-3xl p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden fade-up">
+                <!-- Decals -->
+                <i class="ph-fill ph-sparkle absolute top-5 right-10 text-white/20 text-6xl animate-pulse"></i>
+                <i class="ph-fill ph-circles-four absolute bottom-5 left-10 text-white/10 text-8xl"></i>
+                
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4">Siap Mengubah Cara Belajarmu?</h2>
+                <p class="text-indigo-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+                    Mulai dari gratis, rasakan kehebatan AI mengolah materimu, dan upgrade kapan saja saat Anda siap untuk tingkat berikutnya.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        Coba Sekarang
+                    </button>
+                    <button class="bg-transparent border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="ph-fill ph-play-circle text-xl"></i> Lihat Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white pt-16 pb-8 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white">
+                            <i class="ph-bold ph-graduation-cap text-2xl"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark">JadiKelas<span class="text-primary">.tech</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        Platform AI untuk menciptakan masa depan pendidikan yang interaktif, personal, dan tak membosankan.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-indigo-50 transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-pink-600 hover:bg-pink-50 transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><i class="ph-fill ph-linkedin-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Produk</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="index.html#features" class="hover:text-primary transition-colors">Converter PDF to Course</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">AI Mentor API</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Auto Quiz</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Harga</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Sumber Daya</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Panduan Pengguna</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Studi Kasus</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-dark mb-4">Perusahaan</h4>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="about.html" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Karir</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privasi & Syarat</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Kontak</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-slate-400">&copy; 2026 JadiKelas. Hak Cipta Dilindungi.</p>
+                <div class="flex items-center gap-2 text-sm text-slate-400">
+                    Dibuat dengan <i class="ph-fill ph-heart text-red-500"></i> untuk Pendidikan Indonesia
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LIGHTWEIGHT JAVASCRIPT -->
+    <script>
+        // 1. Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // 2. Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-sm', 'bg-white/95');
+                navbar.classList.remove('bg-white/80');
+            } else {
+                navbar.classList.remove('shadow-sm', 'bg-white/95');
+                navbar.classList.add('bg-white/80');
+            }
+        });
+
+        // 3. Scroll Reveal Animation (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // 4. Pricing Toggle Logic
+        const btnMonthly = document.getElementById('toggle-monthly');
+        const btnOnetime = document.getElementById('toggle-onetime');
+        const priceVals = document.querySelectorAll('.price-val');
+        const pricePeriods = document.querySelectorAll('.price-period');
+
+        // Data Harga
+        const prices = {
+            monthly: ['Rp 25.000', 'Rp 120.000'],
+            onetime: ['Rp 30.000', 'Rp 150.000']
+        };
+
+        function setToggleActive(activeBtn, inactiveBtn) {
+            // Style active button
+            activeBtn.classList.add('bg-white', 'text-dark', 'shadow-sm', 'ring-1', 'ring-slate-900/5');
+            activeBtn.classList.remove('text-slate-500', 'hover:text-dark');
+            
+            // Style inactive button
+            inactiveBtn.classList.remove('bg-white', 'text-dark', 'shadow-sm', 'ring-1', 'ring-slate-900/5');
+            inactiveBtn.classList.add('text-slate-500', 'hover:text-dark');
+        }
+
+        btnMonthly.addEventListener('click', () => {
+            setToggleActive(btnMonthly, btnOnetime);
+            // Update UI text (index 0 is Starter, index 1 is Pro)
+            priceVals[0].innerText = prices.monthly[0];
+            priceVals[1].innerText = prices.monthly[1];
+            pricePeriods.forEach(el => el.innerText = '/ bulan');
+        });
+
+        btnOnetime.addEventListener('click', () => {
+            setToggleActive(btnOnetime, btnMonthly);
+            // Update UI text
+            priceVals[0].innerText = prices.onetime[0];
+            priceVals[1].innerText = prices.onetime[1];
+            pricePeriods.forEach(el => el.innerText = '/ sekali');
+        });
+    </script>
+</body>
+</html>

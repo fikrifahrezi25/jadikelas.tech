@@ -16,6 +16,10 @@ app.get("/index.html", (req, res) => {
     res.sendFile(__dirname + "/public/index.html");
 });
 
+app.get("/pricing", (req, res) => {
+    res.sendFile(__dirname + "/public/pricing/index.html");
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:5526`);
 });

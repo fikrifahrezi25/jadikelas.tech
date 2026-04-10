@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JadiKelas - Ubah PDF Jadi Course Interaktif</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#9333EA', // Purple 600
+                        dark: '#0F172A', // Slate 900
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #4F46E5, #9333EA);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #4F46E5; border-radius: 10px; }
+
+        /* Auth Modal Transitions */
+        .auth-overlay {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-600 bg-slate-50 antialiased overflow-x-hidden">
+
+
+    <div id="login-section" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="min-h-screen flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100 fade-up visible">
+                <button onclick="toggleAuth('login')" class="absolute top-6 right-6 text-slate-400 hover:text-dark transition-colors">
+                    <i class="ph-bold ph-x text-2xl"></i>
+                </button>
+                <div class="p-8 sm:p-10">
+                    <div class="flex items-center gap-2 mb-8 justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                            <i class="ph-bold ph-graduation-cap text-lg"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-extrabold text-dark">Selamat Datang Kembali!</h2>
+                        <p class="text-slate-500 mt-2">Masuk untuk melanjutkan pembelajaranmu.</p>
+                    </div>
+                    <form class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Email</label>
+                            <div class="relative">
+                                <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="email" placeholder="nama@email.com" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-semibold text-dark">Password</label>
+                                <a href="#" class="text-xs font-semibold text-primary hover:text-secondary transition-colors">Lupa Password?</a>
+                            </div>
+                            <div class="relative">
+                                <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="password" placeholder="••••••••" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-0.5 transition-all">Masuk Sekarang</button>
+                    </form>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-slate-500">Belum punya akun? <button onclick="switchAuth('register')" class="text-primary font-bold hover:underline">Daftar Gratis</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-section" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="min-h-screen flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100 fade-up visible">
+                <button onclick="toggleAuth('register')" class="absolute top-6 right-6 text-slate-400 hover:text-dark transition-colors">
+                    <i class="ph-bold ph-x text-2xl"></i>
+                </button>
+                <div class="p-8 sm:p-10">
+                    <div class="flex items-center gap-2 mb-8 justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                            <i class="ph-bold ph-graduation-cap text-lg"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-extrabold text-dark">Mulai Belajar Pintar</h2>
+                        <p class="text-slate-500 mt-2">Buat akun pertamamu dalam hitungan detik.</p>
+                    </div>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Nama Lengkap</label>
+                            <div class="relative">
+                                <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="text" placeholder="Nama Pengguna" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Email</label>
+                            <div class="relative">
+                                <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="email" placeholder="nama@email.com" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Password</label>
+                            <div class="relative">
+                                <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="password" placeholder="Min. 8 karakter" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2 py-2">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary">
+                            <label class="text-xs text-slate-500 leading-snug">Saya menyetujui <a href="#" class="text-primary underline">Syarat & Ketentuan</a> serta Kebijakan Privasi JadiKelas.</label>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-0.5 transition-all">Daftar Sekarang</button>
+                    </form>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-slate-500">Sudah punya akun? <button onclick="switchAuth('login')" class="text-primary font-bold hover:underline">Masuk di sini</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='#'">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <i class="ph-bold ph-graduation-cap text-2xl"></i>
+                    </div>
+                    <span class="font-bold text-2xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="text-slate-600 hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="about/" class="text-slate-600 hover:text-primary font-medium transition-colors">About</a>
+                    <a href="pricing/" class="text-slate-600 hover:text-primary font-medium transition-colors">Pricing</a>
+                    <button onclick="toggleAuth('login')" class="font-medium text-slate-600 hover:text-primary transition-colors">Login</button>
+                    <button onclick="toggleAuth('register')" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</button>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-dark focus:outline-none">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="absolute top-20 left-0 w-72 h-72 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow"></div>
+        <div class="absolute top-40 right-0 w-72 h-72 bg-secondary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse-slow" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                <div class="text-center lg:text-left fade-up">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-primary font-semibold text-sm mb-6">
+                        <i class="ph-fill ph-rocket-launch text-lg"></i>
+                        Platform Pembelajaran AI Generasi Baru
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-dark leading-tight mb-6 tracking-tight">
+                        Ubah Materi Membosankan Jadi <br class="hidden lg:block"/>
+                        <span class="text-gradient">Pembelajaran Interaktif</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Upload PDF atau presentasi Anda, dan biarkan AI kami menyulapnya menjadi *course* modern dengan visual menarik, AI Mentor, dan kuis otomatis dalam hitungan detik.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <button onclick="toggleAuth('register')" class="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-semibold text-lg shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                            Coba Sekarang <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                        <a href="#how-it-works" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-semibold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-play-circle text-xl"></i> Lihat Demo
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-[500px] lg:h-[600px] perspective-1000 fade-up" style="transition-delay: 200ms;">
+                    <div class="absolute top-10 left-10 w-64 h-80 bg-white border border-slate-200 rounded-xl shadow-lg transform -rotate-6 opacity-60 animate-float-delayed z-0 p-5">
+                        <div class="flex items-center gap-2 mb-4 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 bg-red-100 text-red-500 rounded flex items-center justify-center"><i class="ph-fill ph-file-pdf text-xl"></i></div>
+                            <div class="h-4 w-24 bg-slate-200 rounded"></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-2 w-full bg-slate-200 rounded"></div>
+                            <div class="h-2 w-5/6 bg-slate-200 rounded"></div>
+                            <div class="h-2 w-full bg-slate-200 rounded"></div>
+                            <div class="h-2 w-4/6 bg-slate-200 rounded"></div>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-1/2 left-1/4 transform -translate-y-1/2 z-10 w-16 h-16 bg-white rounded-full shadow-xl flex items-center justify-center animate-pulse">
+                        <i class="ph-fill ph-magic-wand text-3xl text-gradient"></i>
+                    </div>
+
+                    <div class="absolute top-20 right-0 w-80 lg:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform rotate-2 animate-float z-20">
+                        <div class="bg-slate-50 border-b border-slate-100 p-4 flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="text-xs font-semibold text-slate-400">Bab 1: Pengantar AI</div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="w-full h-32 bg-indigo-50 rounded-xl mb-4 relative overflow-hidden group">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform cursor-pointer">
+                                        <i class="ph-fill ph-play text-primary text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="font-bold text-dark text-lg mb-2">Konsep Dasar Machine Learning</h3>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between text-xs font-medium text-slate-500 mb-1">
+                                    <span>Progress Belajar</span>
+                                    <span class="text-primary font-bold">65%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full w-[65%]"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mt-4">
+                                <p class="text-sm font-semibold text-dark mb-3"><i class="ph-bold ph-lightning text-yellow-500 mr-1"></i> Quick Quiz</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3 p-2 bg-white border border-indigo-200 rounded-lg cursor-pointer">
+                                        <div class="w-4 h-4 rounded-full border border-indigo-400"></div>
+                                        <span class="text-xs text-slate-600 font-medium">Algoritma terawasi</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 bg-indigo-50 border border-primary rounded-lg cursor-pointer">
+                                        <div class="w-4 h-4 rounded-full border border-primary flex items-center justify-center text-[8px] text-primary"><i class="ph-fill ph-circle"></i></div>
+                                        <span class="text-xs text-primary font-bold">Jaringan Saraf Tiruan</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-10 right-10 z-30 bg-white p-4 rounded-2xl rounded-br-none shadow-xl border border-slate-100 animate-float" style="animation-delay: 1s;">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-secondary to-pink-500 flex items-center justify-center text-white shrink-0">
+                                <i class="ph-bold ph-robot"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-dark mb-1">AI Mentor</p>
+                                <p class="text-xs text-slate-500">Ada yang belum dipahami dari materi ini? Tanya saya!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Reveal Animations
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // Auth Toggle Logic
+        function toggleAuth(type) {
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const body = document.body;
+
+            if (type === 'login') {
+                loginSection.classList.toggle('hidden');
+                body.classList.toggle('overflow-hidden');
+            } else if (type === 'register') {
+                registerSection.classList.toggle('hidden');
+                body.classList.toggle('overflow-hidden');
+            }
+        }
+
+        function switchAuth(target) {
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+
+            if (target === 'register') {
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            } else {
+                registerSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

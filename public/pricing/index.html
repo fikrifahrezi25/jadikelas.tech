@@ -65,6 +65,104 @@
 </head>
 <body class="font-sans text-slate-600 bg-slate-50 antialiased overflow-x-hidden">
 
+        <div id="login-section" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="min-h-screen flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100 fade-up visible">
+                <button onclick="toggleAuth('login')" class="absolute top-6 right-6 text-slate-400 hover:text-dark transition-colors">
+                    <i class="ph-bold ph-x text-2xl"></i>
+                </button>
+                <div class="p-8 sm:p-10">
+                    <div class="flex items-center gap-2 mb-8 justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                            <i class="ph-bold ph-graduation-cap text-lg"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-extrabold text-dark">Selamat Datang Kembali!</h2>
+                        <p class="text-slate-500 mt-2">Masuk untuk melanjutkan pembelajaranmu.</p>
+                    </div>
+                    <form class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Email</label>
+                            <div class="relative">
+                                <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="email" placeholder="nama@email.com" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-semibold text-dark">Password</label>
+                                <a href="#" class="text-xs font-semibold text-primary hover:text-secondary transition-colors">Lupa Password?</a>
+                            </div>
+                            <div class="relative">
+                                <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="password" placeholder="••••••••" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-0.5 transition-all">Masuk Sekarang</button>
+                    </form>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-slate-500">Belum punya akun? <button onclick="switchAuth('register')" class="text-primary font-bold hover:underline">Daftar Gratis</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-section" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="min-h-screen flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100 fade-up visible">
+                <button onclick="toggleAuth('register')" class="absolute top-6 right-6 text-slate-400 hover:text-dark transition-colors">
+                    <i class="ph-bold ph-x text-2xl"></i>
+                </button>
+                <div class="p-8 sm:p-10">
+                    <div class="flex items-center gap-2 mb-8 justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                            <i class="ph-bold ph-graduation-cap text-lg"></i>
+                        </div>
+                        <span class="font-bold text-xl text-dark tracking-tight">JadiKelas<span class="text-primary">.tech</span></span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-extrabold text-dark">Mulai Belajar Pintar</h2>
+                        <p class="text-slate-500 mt-2">Buat akun pertamamu dalam hitungan detik.</p>
+                    </div>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Nama Lengkap</label>
+                            <div class="relative">
+                                <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="text" placeholder="Nama Pengguna" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Email</label>
+                            <div class="relative">
+                                <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="email" placeholder="nama@email.com" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-dark mb-2">Password</label>
+                            <div class="relative">
+                                <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                                <input type="password" placeholder="Min. 8 karakter" class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2 py-2">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary">
+                            <label class="text-xs text-slate-500 leading-snug">Saya menyetujui <a href="#" class="text-primary underline">Syarat & Ketentuan</a> serta Kebijakan Privasi JadiKelas.</label>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-0.5 transition-all">Daftar Sekarang</button>
+                    </form>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-slate-500">Sudah punya akun? <button onclick="switchAuth('login')" class="text-primary font-bold hover:underline">Masuk di sini</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- NAVBAR -->
     <nav class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,8 +180,8 @@
                     <a href="../index.html" class="text-slate-600 hover:text-primary font-medium transition-colors">Home</a>
                     <a href="../about" class="text-slate-600 hover:text-primary font-medium transition-colors">About</a>
                     <a href="#" class="text-slate-600 hover:text-primary font-medium transition-colors">Pricing</a>
-                    <a href="../login" class="font-medium text-slate-600 hover:text-primary transition-colors">Masuk</a>
-                    <a href="#" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</a>
+                    <button onclick="toggleAuth('login')" class="font-medium text-slate-600 hover:text-primary transition-colors">Login</button>
+                    <button onclick="toggleAuth('register')" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</button>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -101,9 +199,9 @@
                 <a href="../index.html" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Home</a>
                 <a href="../about" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">About</a>
                 <a href="#" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Pricing</a>
+                <button onclick="toggleAuth('login')" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-primary rounded-lg">Login</button>
                 <hr class="my-2 border-slate-100">
-                <a href="../login" class="block px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-lg">Masuk</a>
-                <a href="#" class="block px-3 py-3 mt-2 text-base font-medium text-center text-white bg-primary rounded-xl">Coba Gratis</a>
+                <button onclick="toggleAuth('register')" class="bg-dark hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Coba Gratis</button>
             </div>
         </div>
     </nav>
@@ -523,7 +621,6 @@
             observer.observe(el);
         });
 
-        // 4. Pricing Toggle Logic
         const btnMonthly = document.getElementById('toggle-monthly');
         const btnOnetime = document.getElementById('toggle-onetime');
         const priceVals = document.querySelectorAll('.price-val');
@@ -536,18 +633,14 @@
         };
 
         function setToggleActive(activeBtn, inactiveBtn) {
-            // Style active button
             activeBtn.classList.add('bg-white', 'text-dark', 'shadow-sm', 'ring-1', 'ring-slate-900/5');
             activeBtn.classList.remove('text-slate-500', 'hover:text-dark');
-            
-            // Style inactive button
             inactiveBtn.classList.remove('bg-white', 'text-dark', 'shadow-sm', 'ring-1', 'ring-slate-900/5');
             inactiveBtn.classList.add('text-slate-500', 'hover:text-dark');
         }
 
         btnMonthly.addEventListener('click', () => {
             setToggleActive(btnMonthly, btnOnetime);
-            // Update UI text (index 0 is Starter, index 1 is Pro)
             priceVals[0].innerText = prices.monthly[0];
             priceVals[1].innerText = prices.monthly[1];
             pricePeriods.forEach(el => el.innerText = '/ bulan');
@@ -555,11 +648,38 @@
 
         btnOnetime.addEventListener('click', () => {
             setToggleActive(btnOnetime, btnMonthly);
-            // Update UI text
             priceVals[0].innerText = prices.onetime[0];
             priceVals[1].innerText = prices.onetime[1];
             pricePeriods.forEach(el => el.innerText = '/ sekali');
         });
+
+        // Auth Toggle Logic
+        function toggleAuth(type) {
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const body = document.body;
+
+            if (type === 'login') {
+                loginSection.classList.toggle('hidden');
+                body.classList.toggle('overflow-hidden');
+            } else if (type === 'register') {
+                registerSection.classList.toggle('hidden');
+                body.classList.toggle('overflow-hidden');
+            }
+        }
+
+        function switchAuth(target) {
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+
+            if (target === 'register') {
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            } else {
+                registerSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+            }
+        }
     </script>
 </body>
 </html>

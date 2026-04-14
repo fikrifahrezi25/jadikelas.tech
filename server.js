@@ -2,12 +2,21 @@ const express = require("express");
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
+const session = require("express-session");
+const authRoutes = require("./auth");
 
 const app = express();
 const PORT = 5526;
 
 app.use(express.json());
+app.use(session({
+    secret: "jadikelas_secret_key_2024",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 hari
+}));
 app.use(express.static("public"));
+app.use("/api", authRoutes);
 
 const POLLINATIONS_API_KEY = "YOUR_API_KEY";
 
@@ -35,7 +44,7 @@ app.get("/favicon.ico", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-    res.sendFile(__dirname + "/dashboard/index.html");
+    res.sendFile(__dirname + "/public/dashboard/index.html");
 });
 
 app.post("/api/chat", async (req, res) => {

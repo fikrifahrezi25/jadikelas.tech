@@ -34,6 +34,10 @@ app.get("/favicon.ico", (req, res) => {
     res.sendFile(__dirname + "/public/favicon.ico");
 });
 
+app.get("/dashboard", (req, res) => {
+    res.sendFile(__dirname + "/dashboard/index.html");
+});
+
 app.post("/api/chat", async (req, res) => {
     const { sessionId, message } = req.body;
 

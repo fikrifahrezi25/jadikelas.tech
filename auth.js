@@ -126,4 +126,34 @@ router.post("/update-profile", (req, res) => {
     return res.json({ success: true, message: "Profil berhasil diperbarui." });
 });
 
+// POST /api/change-password
+router.post("/change-password", async (req, res) => {
+    if (!req.session.user)
+        return res.status(401).json({ success: false, message: "Belum login." });
+
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confirmPassword)
+        return res.status(400).json({ success: false, message: "Semua field wajib diisi." });
+
+    if (newPassword.length < 6)
+        return res.status(400).json({ success: false, message: "Kata sandi baru minimal 6 karakter." });
+
+    if (newPassword !== confirmPassword)
+        return res.status(400).json({ success: false, message: "Konfirmasi kata sandi tidak cocok." });
+
+    const users = readDB();
+    const idx = users.findIndex(u => u.email === req.session.user.email);
+    if (idx === -1) return res.status(404).json({ success: false, message: "User tidak ditemukan." });
+
+    const match = await bcrypt.compare(currentPassword, users[idx].password);
+    if (!match)
+        return res.status(401).json({ success: false, message: "Kata sandi saat ini salah." });
+
+    users[idx].password = await bcrypt.hash(newPassword, 10);
+    writeDB(users);
+
+    return res.json({ success: true, message: "Kata sandi berhasil diperbarui." });
+});
+
 module.exports = router;

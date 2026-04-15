@@ -127,12 +127,46 @@ async function logoutUser() {
     window.location.href = "/";
 }
 
+// Change password
+async function handleChangePassword(e) {
+    e.preventDefault();
+    const currentPassword = document.getElementById("pw-current").value;
+    const newPassword = document.getElementById("pw-new").value;
+    const confirmPassword = document.getElementById("pw-confirm").value;
+    const msgEl = document.getElementById("password-msg");
+
+    try {
+        const res = await fetch("/api/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+        });
+        const data = await res.json();
+
+        msgEl.textContent = data.message;
+        msgEl.className = data.success
+            ? "text-sm font-medium text-emerald-600"
+            : "text-sm font-medium text-red-500";
+
+        if (data.success) {
+            // Reset form setelah berhasil
+            document.getElementById("password-form").reset();
+        }
+    } catch (_) {
+        msgEl.textContent = "Terjadi kesalahan. Coba lagi.";
+        msgEl.className = "text-sm font-medium text-red-500";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadDashboard();
     loadCourses();
 
     const profileForm = document.getElementById("profile-form");
     if (profileForm) profileForm.addEventListener("submit", handleUpdateProfile);
+
+    const passwordForm = document.getElementById("password-form");
+    if (passwordForm) passwordForm.addEventListener("submit", handleChangePassword);
 
     document.querySelectorAll("[data-logout]").forEach(btn => {
         btn.addEventListener("click", logoutUser);

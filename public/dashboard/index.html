@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Ultimate - JadiKelas.tech</title>
+    <title>Dashboard - JadiKelas</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -79,11 +79,11 @@
                 </div>
             </div>
             <div class="p-10 text-center">
-                <h2 class="text-3xl font-extrabold text-dark mb-4">Selamat Datang di JadiKelas! 🚀</h2>
-                <p class="text-slate-500 mb-8 leading-relaxed">Platform belajar berbasis AI yang akan mengubah cara Anda memahami materi pelajaran. Mari mulai tur singkat untuk melihat fitur-fitur kami.</p>
+                <h2 class="text-3xl font-extrabold text-dark mb-4">Selamat Datang di JadiKelas!🚀</h2>
+                <p class="text-slate-500 mb-8 leading-relaxed">Platform belajar berbasis AI yang akan mengubah cara Anda memahami materi pelajaran.</p>
                 <div class="flex flex-col gap-3">
-                    <button onclick="startTour()" class="w-full py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all">Mulai Tur Singkat</button>
-                    <button onclick="closeOnboarding()" class="w-full py-4 text-slate-400 font-semibold hover:text-slate-600 transition-all">Lewati Saja</button>
+                    <button onclick="closeOnboarding()" class="w-full py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all">Mulai</button>
+                    <!--<button onclick="closeOnboarding()" class="w-full py-4 text-slate-400 font-semibold hover:text-slate-600 transition-all">Lewati Saja</button>-->
                 </div>
             </div>
         </div>
@@ -167,6 +167,18 @@
                 <i class="ph-fill ph-user text-xl"></i> Profile
             </button>
         </nav>
+                <div class="p-4 border-t border-slate-800/50">
+            <div class="flex items-center gap-3 px-4 py-3 mb-2">
+                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold" data-user-initials>UN</div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-semibold text-white truncate" data-user-name>User Name</p>
+                    <p class="text-xs text-slate-400 truncate" data-user-email>user@email.com</p>
+                </div>
+            </div>
+            <button data-logout class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg font-medium transition-all">
+                <i class="ph-bold ph-sign-out"></i> Logout
+            </button>
+        </div>
     </aside>
 
     <!-- ================= MAIN CONTENT ================= -->
@@ -204,10 +216,24 @@
                             <div class="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-2xl"><i class="ph-fill ph-book-open"></i></div>
                             <div><p class="text-xs font-medium text-slate-500">Course Dibuat</p><p class="text-lg md:text-xl font-bold text-dark" data-user-course>0 / 2 Maks</p></div>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+<!--                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
                             <div class="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-2xl"><i class="ph-fill ph-coin"></i></div>
                             <div><p class="text-xs font-medium text-slate-500">Sisa Credit</p><p class="text-xl font-bold text-dark" data-user-credit>10</p></div>
+                        </div> -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-2xl">
+                        <i class="ph-fill ph-coin"></i>
                         </div>
+                        <div>
+                        <p class="text-xs font-medium text-slate-500">Sisa Credit</p>
+                        <p class="text-xl font-bold text-dark" data-user-credit>10</p>
+                    </div>
+                </div>
+                        <button onclick="switchPage('upgrade')" class="px-4 py-2 bg-orange-100 text-orange-600 text-xs font-bold rounded-xl hover:bg-orange-200 transition-all">
+                        + Top Up
+                        </button>
+                    </div>
                     </div>
 
                     <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 md:p-12 text-center border-2 border-dashed border-indigo-200 bg-indigo-50/20" id="step-upload">
@@ -316,7 +342,7 @@
                     <div class="flex items-center gap-6">
                         <div class="relative group">
                             <div class="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-slate-200 border-4 border-white shadow-xl overflow-hidden">
-                                <img src="https://ui-avatars.com/api/?name=User+Name&background=4F46E5&color=fff&size=256" alt="Avatar" class="w-full h-full object-cover">
+                                <img src="../assets/avatar.png" alt="Avatar" class="w-full h-full object-cover">
                             </div>
                             <button class="absolute -bottom-2 -right-2 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-600 hover:text-primary transition-colors">
                                 <i class="ph-bold ph-camera"></i>
@@ -353,24 +379,58 @@
                             <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                                 <h3 class="text-lg font-bold text-dark mb-4">Pengaturan Akun</h3>
                                 <div class="space-y-4">
-                                    <button class="w-full flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-all group">
+                                    <!-- <button class="w-full flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-all group">
+                                        <div class="flex items-center gap-3">
+                                            <i class="ph ph-lock-key text-xl text-slate-400 group-hover:text-primary"></i>
+                                            <span class="font-medium text-slate-700">Ubah Kata Sandi</span>
+                                        </div>
+                                        <i class="ph ph-caret-right"></i>
+                                    </button> -->
+                                    <button onclick="switchPage('password')" class="w-full flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-all group">
                                         <div class="flex items-center gap-3">
                                             <i class="ph ph-lock-key text-xl text-slate-400 group-hover:text-primary"></i>
                                             <span class="font-medium text-slate-700">Ubah Kata Sandi</span>
                                         </div>
                                         <i class="ph ph-caret-right"></i>
                                     </button>
-                                    <button class="w-full flex items-center justify-between p-4 hover:bg-red-50 rounded-2xl transition-all group">
-                                        <div class="flex items-center gap-3">
-                                            <i class="ph ph-trash text-xl text-red-400"></i>
-                                            <span class="font-medium text-red-600">Hapus Akun</span>
-                                        </div>
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Ubah Kata Sandi -->
+                 <div id="page-password" class="page-content space-y-8">
+    <button onclick="switchPage('profile')" class="flex items-center gap-2 text-slate-500 hover:text-primary transition-all font-medium">
+        <i class="ph-bold ph-arrow-left"></i> Kembali ke Profile
+    </button>
+    
+    <div class="max-w-xl bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <h2 class="text-2xl font-bold text-dark mb-2">Ubah Kata Sandi</h2>
+        <p class="text-slate-500 text-sm mb-8">Pastikan kata sandi baru Anda unik dan mudah diingat.</p>
+        
+        <form id="password-form" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Kata Sandi Saat Ini</label>
+                <input type="password" id="pw-current" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Kata Sandi Baru</label>
+                <input type="password" id="pw-new" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Konfirmasi Kata Sandi Baru</label>
+                <input type="password" id="pw-confirm" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none">
+            </div>
+            <p id="password-msg" class="text-sm font-medium"></p>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+                    Simpan Kata Sandi Baru
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
                     <!-- Form Profile... -->
                 </div>
 

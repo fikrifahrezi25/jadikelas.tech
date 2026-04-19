@@ -18,7 +18,7 @@ app.use(session({
 app.use(express.static("public"));
 app.use("/api", authRoutes);
 
-const POLLINATIONS_API_KEY = "YOUR_API_KEY";
+const POLLINATIONS_API_KEY = "sk_RM9sUErPNlaj7kFenSIMljnIVvAyssUk";
 
 const SYSTEM_PROMPT = fs.readFileSync(
     path.join(__dirname, "SYSTEM_PROMPT.md"),
@@ -45,6 +45,10 @@ app.get("/favicon.ico", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     res.sendFile(__dirname + "/public/dashboard/index.html");
+});
+
+app.get("/index.html", (req, res) => {
+    res.sendFile(__dirname + "/public/index.html");
 });
 
 app.post("/api/chat", async (req, res) => {

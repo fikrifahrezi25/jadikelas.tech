@@ -2,7 +2,20 @@
 // auth-handler.js — Include di index.html, about, pricing
 // ============================================================
 
-// Cek session saat halaman load, update navbar jika sudah login
+// Inject CSS untuk dropdown animation
+(function() {
+    const style = document.createElement("style");
+    style.textContent = `
+        #profile-dropdown {
+            transform-origin: top right;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        #profile-dropdown.opacity-0 { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+        #profile-dropdown.opacity-100 { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    `;
+    document.head.appendChild(style);
+})();
+
 async function checkAuthState() {
     try {
         const res = await fetch("/api/me");
@@ -14,19 +27,58 @@ async function checkAuthState() {
 }
 
 function updateNavbarLoggedIn(user) {
-    // Ganti tombol Login & Coba Gratis dengan nama user + tombol dashboard
-    const loginBtns = document.querySelectorAll("[data-auth-login], [data-auth-register]");
-    loginBtns.forEach(btn => btn.style.display = "none");
+    // Sembunyikan tombol Login & Coba Gratis
+    document.querySelectorAll("[data-auth-login]").forEach(el => el.style.display = "none");
+    document.querySelectorAll("[data-auth-register]").forEach(el => el.style.display = "none");
 
-    const navActions = document.getElementById("nav-auth-actions");
-    if (navActions) {
-        navActions.innerHTML = `
-            <a href="/dashboard" class="font-medium text-slate-600 hover:text-primary transition-colors">Dashboard</a>
-            <span class="text-sm font-semibold text-dark">${user.namaLengkap}</span>
-            <button onclick="handleLogout()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-full font-medium transition-all text-sm">Logout</button>
-        `;
+    // Tampilkan avatar di desktop
+    const avatarContainer = document.getElementById("nav-avatar-container");
+    if (avatarContainer) {
+        avatarContainer.style.display = "flex";
+        const nameEl = avatarContainer.querySelector("[data-dropdown-name]");
+        const emailEl = avatarContainer.querySelector("[data-dropdown-email]");
+        if (nameEl) nameEl.textContent = user.namaLengkap;
+        if (emailEl) emailEl.textContent = user.email;
+    }
+
+    // Tampilkan avatar button di mobile navbar
+    const mobileNavAvatar = document.getElementById("mobile-nav-avatar");
+    if (mobileNavAvatar) mobileNavAvatar.style.display = "block";
+
+    // Tampilkan profile section di mobile menu
+    const mobileAvatarContainer = document.getElementById("mobile-avatar-container");
+    if (mobileAvatarContainer) {
+        mobileAvatarContainer.style.display = "block";
+        const nameEl = mobileAvatarContainer.querySelector("[data-dropdown-name]");
+        const emailEl = mobileAvatarContainer.querySelector("[data-dropdown-email]");
+        if (nameEl) nameEl.textContent = user.namaLengkap;
+        if (emailEl) emailEl.textContent = user.email;
     }
 }
+
+// Toggle dropdown profile
+function toggleProfileDropdown() {
+    const dropdown = document.getElementById("profile-dropdown");
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains("opacity-0");
+    if (isHidden) {
+        dropdown.classList.remove("opacity-0", "pointer-events-none", "translate-y-[-8px]");
+        dropdown.classList.add("opacity-100", "translate-y-0");
+    } else {
+        dropdown.classList.add("opacity-0", "pointer-events-none", "translate-y-[-8px]");
+        dropdown.classList.remove("opacity-100", "translate-y-0");
+    }
+}
+
+// Tutup dropdown saat klik di luar
+document.addEventListener("click", function(e) {
+    const container = document.getElementById("nav-avatar-container");
+    const dropdown = document.getElementById("profile-dropdown");
+    if (container && dropdown && !container.contains(e.target)) {
+        dropdown.classList.add("opacity-0", "pointer-events-none", "translate-y-[-8px]");
+        dropdown.classList.remove("opacity-100", "translate-y-0");
+    }
+});
 
 // ---- REGISTER ----
 async function handleRegister(e) {
@@ -46,7 +98,6 @@ async function handleRegister(e) {
         const data = await res.json();
 
         if (data.success) {
-            // Auto login setelah register
             const loginRes = await fetch("/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

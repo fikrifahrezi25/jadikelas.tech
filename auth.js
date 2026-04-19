@@ -9,7 +9,7 @@ const DB_PATH = path.join(__dirname, "database_user.json");
 const COURSES_PATH = path.join(__dirname, "course_list.json");
 
 const PLAN_LIMITS = { 1: 2, 2: 10, 3: 50 };
-const PLAN_NAMES = { 1: "Free", 2: "Starter", 3: "Pro" };
+const PLAN_NAMES = { 1: "Free", 2: "Starter Boost", 3: "Smart Learner", 4: "Creator", 5: "Campus Pro" };
 
 function readDB() {
     try {

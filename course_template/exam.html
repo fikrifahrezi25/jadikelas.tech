@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Ujian - JadiKelas.tech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        .exam-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .timer-warning {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        
+        .option-card.selected {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        .badge-legendary { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+        .badge-epic { background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); }
+        .badge-rare { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); }
+        .badge-uncommon { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50 min-h-screen">
+
+    <!-- EXAM START SCREEN -->
+    <div id="exam-start" class="min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl p-8 md:p-12">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-4xl mx-auto mb-6">
+                    🎓
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3" id="exam-title">Simulasi Ujian</h1>
+                <p class="text-slate-600 text-lg">Siap menguji kemampuanmu?</p>
+            </div>
+            
+            <div class="space-y-4 mb-8">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                    <span class="text-slate-600 flex items-center gap-2">
+                        <i class="ph-fill ph-question text-indigo-500"></i>
+                        Total Soal
+                    </span>
+                    <span class="font-bold text-slate-900" id="total-questions">20</span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                    <span class="text-slate-600 flex items-center gap-2">
+                        <i class="ph-fill ph-clock text-indigo-500"></i>
+                        Waktu
+                    </span>
+                    <span class="font-bold text-slate-900" id="time-limit">30 menit</span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                    <span class="text-slate-600 flex items-center gap-2">
+                        <i class="ph-fill ph-trophy text-indigo-500"></i>
+                        Nilai Kelulusan
+                    </span>
+                    <span class="font-bold text-slate-900" id="passing-score">70</span>
+                </div>
+            </div>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">
+                <h3 class="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    <i class="ph-fill ph-warning"></i>
+                    Aturan Ujian
+                </h3>
+                <ul class="text-sm text-amber-800 space-y-1">
+                    <li>• Jangan berpindah tab atau minimize browser</li>
+                    <li>• Lebih dari 3x tab switch = penalty -10%</li>
+                    <li>• Timer akan otomatis berjalan setelah mulai</li>
+                    <li>• Jawaban akan auto-submit saat waktu habis</li>
+                </ul>
+            </div>
+            
+            <button onclick="startExam()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-lg transition-all shadow-lg hover:shadow-xl">
+                Mulai Ujian Sekarang
+            </button>
+        </div>
+    </div>
+
+    <!-- EXAM SCREEN -->
+    <div id="exam-screen" class="hidden min-h-screen">
+        <!-- Header dengan Timer -->
+        <div class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+            <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div>
+                    <h2 class="font-bold text-slate-900 text-lg">Ujian Sedang Berlangsung</h2>
+                    <div class="flex items-center gap-4 mt-1">
+                        <span class="text-sm text-slate-600">
+                            Soal <span id="current-number">1</span> dari <span id="total-number">20</span>
+                        </span>
+                        <div class="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="progress-bar h-full bg-gradient-to-r from-indigo-500 to-purple-500" style="width: 5%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="timer" class="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-xl font-mono font-bold text-slate-900">
+                    <i class="ph-fill ph-clock text-indigo-500"></i>
+                    <span id="timer-text">30:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Question Content -->
+        <div class="max-w-4xl mx-auto px-6 py-8">
+            <div id="question-container" class="exam-card rounded-3xl p-8 mb-6">
+                <!-- Question will be injected here -->
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex items-center justify-between">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all">
+                    <i class="ph ph-arrow-left"></i> Sebelumnya
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all">
+                    Selanjutnya <i class="ph ph-arrow-right"></i>
+                </button>
+                <button id="submit-btn" onclick="confirmSubmit()" class="hidden px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl transition-all shadow-lg">
+                    Submit Ujian <i class="ph-fill ph-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl p-8 md:p-12">
+            <div class="text-center mb-8">
+                <div id="result-icon" class="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-5xl mx-auto mb-6">
+                    🎉
+                </div>
+                <h1 class="text-4xl font-extrabold text-slate-900 mb-2">Ujian Selesai!</h1>
+                <p id="result-message" class="text-slate-600 text-lg">Selamat! Kamu lulus ujian</p>
+            </div>
+            
+            <!-- Score Display -->
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 mb-6 text-center">
+                <div class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2" id="final-score">85</div>
+                <div class="text-2xl font-bold text-slate-700 mb-4" id="final-grade">Grade: A</div>
+                <div class="text-slate-600">
+                    <span id="correct-count">17</span> benar dari <span id="total-count">20</span> soal
+                </div>
+            </div>
+            
+            <!-- Rewards -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-amber-50 rounded-xl p-4 text-center">
+                    <div class="text-3xl mb-2">⚡</div>
+                    <div class="font-bold text-amber-900" id="xp-reward">+500 XP</div>
+                    <div class="text-xs text-amber-700">Experience</div>
+                </div>
+                <div class="bg-yellow-50 rounded-xl p-4 text-center">
+                    <div class="text-3xl mb-2">🪙</div>
+                    <div class="font-bold text-yellow-900" id="coin-reward">+150 Coin</div>
+                    <div class="text-xs text-yellow-700">Currency</div>
+                </div>
+            </div>
+            
+            <!-- Badges -->
+            <div id="badges-container" class="mb-8">
+                <!-- Badges will be injected here -->
+            </div>
+            
+            <!-- Penalty Notice -->
+            <div id="penalty-notice" class="hidden bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                <p class="text-sm text-red-800 flex items-center gap-2">
+                    <i class="ph-fill ph-warning"></i>
+                    <span id="penalty-text"></span>
+                </p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="backToCourse()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all">
+                    Kembali ke Course
+                </button>
+                <button onclick="retakeExam()" class="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all">
+                    Ulangi Ujian
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB SWITCH WARNING MODAL -->
+    <div id="tab-warning" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center text-red-500 text-3xl mx-auto mb-4">
+                    <i class="ph-fill ph-warning"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-lg mb-2">⚠️ Peringatan!</h3>
+                <p class="text-slate-600">Kamu berpindah tab. Ini dicatat sebagai pelanggaran.</p>
+                <p class="text-sm text-red-600 font-semibold mt-2">Tab Switch: <span id="tab-count">1</span>/3</p>
+            </div>
+            <button onclick="closeTabWarning()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all">
+                Kembali ke Ujian
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // <!-- COURSE_ID_INJECT -->
+        let examData = null;
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let timeLeft = 1800; // 30 minutes
+        let timerInterval = null;
+        let tabSwitches = 0;
+        let examStartTime = 0;
+
+        // Load exam on page load
+        async function loadExam() {
+            try {
+                const res = await fetch('/api/course/generate-exam', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courseId: COURSE_ID })
+                });
+                const data = await res.json();
+                
+                if (!data.success) {
+                    alert('Gagal load exam: ' + data.message);
+                    window.location.href = `/course/${COURSE_ID}`;
+                    return;
+                }
+                
+                examData = data.exam;
+                document.getElementById('exam-title').textContent = examData.title;
+                document.getElementById('total-questions').textContent = examData.totalQuestions;
+                document.getElementById('total-number').textContent = examData.totalQuestions;
+                document.getElementById('time-limit').textContent = Math.round(examData.timeLimit / 60) + ' menit';
+                document.getElementById('passing-score').textContent = examData.passingScore;
+                
+                timeLeft = examData.timeLimit;
+                
+            } catch (err) {
+                console.error('Load exam error:', err);
+                alert('Gagal load exam. Coba lagi.');
+            }
+        }
+
+        function startExam() {
+            if (!examData) return;
+            
+            document.getElementById('exam-start').classList.add('hidden');
+            document.getElementById('exam-screen').classList.remove('hidden');
+            
+            examStartTime = Date.now();
+            startTimer();
+            showQuestion(0);
+            setupTabDetection();
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmitExam();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-text').textContent = display;
+            
+            // Warning animation when < 5 minutes
+            if (timeLeft < 300 && timeLeft > 0) {
+                document.getElementById('timer').classList.add('timer-warning', 'bg-red-50');
+                document.querySelector('#timer i').classList.add('text-red-500');
+            }
+        }
+
+        function showQuestion(index) {
+            if (!examData || !examData.questions[index]) return;
+            
+            currentQuestion = index;
+            const q = examData.questions[index];
+            const container = document.getElementById('question-container');
+            
+            // Update progress
+            document.getElementById('current-number').textContent = index + 1;
+            const progress = ((index + 1) / examData.totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            // Update buttons
+            document.getElementById('prev-btn').style.display = index === 0 ? 'none' : 'block';
+            document.getElementById('next-btn').style.display = index === examData.totalQuestions - 1 ? 'none' : 'block';
+            document.getElementById('submit-btn').style.display = index === examData.totalQuestions - 1 ? 'block' : 'none';
+            
+            // Render question based on type
+            let html = '';
+            
+            if (q.type === 'multiple_choice' || q.type === 'case_study') {
+                if (q.scenario) {
+                    html += `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                        <h4 class="font-bold text-amber-900 mb-2">📖 Kasus:</h4>
+                        <p class="text-amber-800">${q.scenario}</p>
+                    </div>`;
+                }
+                
+                html += `
+                    <h3 class="text-xl font-bold text-slate-900 mb-6">
+                        ${index + 1}. ${q.question}
+                    </h3>
+                    <div class="space-y-3">
+                        ${q.options.map((opt, i) => `
+                            <div class="option-card ${userAnswers[index] === opt ? 'selected' : ''} p-4 rounded-xl border-2 border-slate-200 bg-white" onclick="selectAnswer(${index}, '${opt.replace(/'/g, "\\'")}')">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full border-2 ${userAnswers[index] === opt ? 'border-white bg-white/20' : 'border-slate-300'} flex items-center justify-center font-bold">
+                                        ${String.fromCharCode(65 + i)}
+                                    </div>
+                                    <span class="font-medium">${opt}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (q.type === 'true_false') {
+                html += `
+                    <h3 class="text-xl font-bold text-slate-900 mb-6">
+                        ${index + 1}. ${q.question}
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="option-card ${userAnswers[index] === 'true' ? 'selected' : ''} p-6 rounded-xl border-2 border-slate-200 bg-white text-center" onclick="selectAnswer(${index}, 'true')">
+                            <div class="text-4xl mb-2">✅</div>
+                            <span class="font-bold text-lg">BENAR</span>
+                        </div>
+                        <div class="option-card ${userAnswers[index] === 'false' ? 'selected' : ''} p-6 rounded-xl border-2 border-slate-200 bg-white text-center" onclick="selectAnswer(${index}, 'false')">
+                            <div class="text-4xl mb-2">❌</div>
+                            <span class="font-bold text-lg">SALAH</span>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'matching') {
+                html += `
+                    <h3 class="text-xl font-bold text-slate-900 mb-6">
+                        ${index + 1}. ${q.question}
+                    </h3>
+                    <div class="space-y-4" id="matching-container">
+                        ${q.pairs.map((pair, i) => `
+                            <div class="bg-white rounded-xl p-4 border-2 border-slate-200">
+                                <div class="font-bold text-slate-900 mb-2">${pair.term}</div>
+                                <select class="w-full p-3 rounded-lg border-2 border-slate-200 focus:border-indigo-500 outline-none" onchange="selectMatching(${index}, '${pair.term.replace(/'/g, "\\'")}', this.value)">
+                                    <option value="">-- Pilih Definisi --</option>
+                                    ${q.pairs.map(p => `<option value="${p.definition.replace(/"/g, '&quot;')}" ${userAnswers[index] && userAnswers[index][pair.term] === p.definition ? 'selected' : ''}>${p.definition}</option>`).join('')}
+                                </select>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Add difficulty badge
+            const difficultyColors = {
+                easy: 'bg-emerald-50 text-emerald-600',
+                medium: 'bg-amber-50 text-amber-600',
+                hard: 'bg-red-50 text-red-600'
+            };
+            html += `<div class="mt-6 flex items-center justify-between">
+                <span class="text-sm px-3 py-1 rounded-full ${difficultyColors[q.difficulty] || difficultyColors.easy}">
+                    ${q.difficulty === 'easy' ? 'Mudah' : q.difficulty === 'medium' ? 'Sedang' : 'Sulit'}
+                </span>
+                <span class="text-sm text-slate-500">${q.points} poin</span>
+            </div>`;
+            
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(index, answer) {
+            userAnswers[index] = answer;
+            showQuestion(index);
+        }
+
+        function selectMatching(index, term, definition) {
+            if (!userAnswers[index]) userAnswers[index] = {};
+            userAnswers[index][term] = definition;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < examData.totalQuestions - 1) {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function confirmSubmit() {
+            const unanswered = examData.totalQuestions - Object.keys(userAnswers).length;
+            if (unanswered > 0) {
+                if (!confirm(`Masih ada ${unanswered} soal yang belum dijawab. Yakin submit?`)) {
+                    return;
+                }
+            }
+            submitExam();
+        }
+
+        function autoSubmitExam() {
+            alert('Waktu habis! Ujian akan otomatis di-submit.');
+            submitExam();
+        }
+
+        async function submitExam() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            const timeSpent = Math.round((Date.now() - examStartTime) / 1000);
+            
+            try {
+                const res = await fetch('/api/course/submit-exam', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: COURSE_ID,
+                        answers: userAnswers,
+                        timeSpent,
+                        tabSwitches
+                    })
+                });
+                const data = await res.json();
+                
+                if (!data.success) {
+                    alert('Gagal submit: ' + data.message);
+                    return;
+                }
+                
+                showResult(data);
+                
+            } catch (err) {
+                console.error('Submit error:', err);
+                alert('Gagal submit. Coba lagi.');
+            }
+        }
+
+        function showResult(data) {
+            document.getElementById('exam-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            // Update result display
+            document.getElementById('final-score').textContent = data.score;
+            document.getElementById('final-grade').textContent = 'Grade: ' + data.grade;
+            document.getElementById('correct-count').textContent = data.correctCount;
+            document.getElementById('total-count').textContent = data.totalQuestions;
+            document.getElementById('xp-reward').textContent = '+' + data.xpReward + ' XP';
+            document.getElementById('coin-reward').textContent = '+' + data.coinReward + ' Coin';
+            
+            // Update icon and message
+            const icon = document.getElementById('result-icon');
+            const message = document.getElementById('result-message');
+            if (data.passed) {
+                icon.innerHTML = '🎉';
+                icon.className = 'w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-5xl mx-auto mb-6';
+                message.textContent = 'Selamat! Kamu lulus ujian!';
+            } else {
+                icon.innerHTML = '💪';
+                icon.className = 'w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-5xl mx-auto mb-6';
+                message.textContent = 'Jangan menyerah! Coba lagi untuk hasil lebih baik.';
+            }
+            
+            // Show badges
+            if (data.badges && data.badges.length > 0) {
+                const badgesHTML = `
+                    <div class="text-center mb-4">
+                        <h3 class="font-bold text-slate-900 mb-4">🏆 Badge Diraih</h3>
+                        <div class="flex gap-3 justify-center flex-wrap">
+                            ${data.badges.map(b => `
+                                <div class="badge-${b.rarity} text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg">
+                                    ${b.icon} ${b.name}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                document.getElementById('badges-container').innerHTML = badgesHTML;
+            }
+            
+            // Show penalty
+            if (data.penalty) {
+                document.getElementById('penalty-notice').classList.remove('hidden');
+                document.getElementById('penalty-text').textContent = data.penalty;
+            }
+        }
+
+        function setupTabDetection() {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && timerInterval) {
+                    tabSwitches++;
+                    document.getElementById('tab-count').textContent = tabSwitches;
+                    document.getElementById('tab-warning').classList.remove('hidden');
+                }
+            });
+        }
+
+        function closeTabWarning() {
+            document.getElementById('tab-warning').classList.add('hidden');
+        }
+
+        function backToCourse() {
+            window.location.href = `/course/${COURSE_ID}`;
+        }
+
+        function retakeExam() {
+            window.location.reload();
+        }
+
+        // Load exam on page load
+        document.addEventListener('DOMContentLoaded', loadExam);
+    </script>
+</body>
+</html>

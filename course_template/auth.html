@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabung Course — JadiKelas.tech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { primary: '#6366f1', secondary: '#8b5cf6', dark: '#0F172A' },
+                    animation: { blob: 'blob 7s infinite', fadeUp: 'fadeUp 0.4s ease-out forwards' },
+                    keyframes: {
+                        blob: { '0%': {transform:'translate(0,0) scale(1)'}, '33%': {transform:'translate(30px,-50px) scale(1.1)'}, '66%': {transform:'translate(-20px,20px) scale(0.9)'}, '100%': {transform:'translate(0,0) scale(1)'} },
+                        fadeUp: { from:{opacity:'0',transform:'translateY(20px)'}, to:{opacity:'1',transform:'translateY(0)'} }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
+        .glass{background:rgba(255,255,255,0.75);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);box-shadow:0 8px 32px 0 rgba(31,38,135,0.07)}
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 min-h-screen flex items-center justify-center p-4 font-sans antialiased">
+    <!-- Ambient BG -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-300/20 blur-[120px] animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-300/20 blur-[120px] animate-blob" style="animation-delay:2s"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[60%] h-[60%] rounded-full bg-blue-300/15 blur-[120px] animate-blob" style="animation-delay:4s"></div>
+    </div>
+
+    <div class="w-full max-w-md animate-fadeUp">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="/" class="inline-flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-2xl shadow-primary/40">
+                    <i class="ph-fill ph-sparkle text-3xl"></i>
+                </div>
+                <span class="font-black text-3xl tracking-tight text-dark">JadiKelas<span class="text-primary">.tech</span></span>
+            </a>
+        </div>
+
+        <!-- Card -->
+        <div class="glass rounded-3xl p-8 border border-white/60">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white mx-auto mb-4 shadow-2xl text-5xl" id="course-emoji">
+                    📚
+                </div>
+                <h2 class="text-3xl font-black text-dark mb-2">Gabung Course</h2>
+                <p class="text-slate-600" id="course-title-display">Loading...</p>
+            </div>
+
+            <!-- Alert -->
+            <div id="alert" class="hidden mb-4 p-4 rounded-xl border-2"></div>
+
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Email</label>
+                        <input type="email" id="login-email" 
+                               class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary transition-all"
+                               placeholder="email@contoh.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Password</label>
+                        <input type="password" id="login-password"
+                               class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary transition-all"
+                               placeholder="••••••••" required>
+                    </div>
+                    <button onclick="handleLogin()" id="login-btn"
+                            class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold text-lg hover:opacity-90 transition-all shadow-lg shadow-primary/30">
+                        Masuk ke Course
+                    </button>
+                </div>
+                <p class="text-center text-sm text-slate-600 mt-6">
+                    Belum punya akun? 
+                    <button onclick="showRegisterForm()" class="text-primary font-bold hover:underline">Daftar Sekarang</button>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Username</label>
+                        <input type="text" id="reg-username"
+                               class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary transition-all"
+                               placeholder="Username kamu" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Email</label>
+                        <input type="email" id="reg-email"
+                               class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary transition-all"
+                               placeholder="email@contoh.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Password</label>
+                        <input type="password" id="reg-password"
+                               class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary transition-all"
+                               placeholder="Minimal 6 karakter" required>
+                    </div>
+                    <button onclick="handleRegister()" id="reg-btn"
+                            class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold text-lg hover:opacity-90 transition-all shadow-lg shadow-emerald-500/30">
+                        Daftar & Mulai Belajar
+                    </button>
+                </div>
+                <p class="text-center text-sm text-slate-600 mt-6">
+                    Sudah punya akun? 
+                    <button onclick="showLoginForm()" class="text-primary font-bold hover:underline">Login</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div class="mt-6 p-4 glass rounded-2xl border border-white/60">
+            <div class="space-y-2">
+                <p class="text-sm text-slate-600 text-center">
+                    <i class="ph-fill ph-lock text-primary"></i>
+                    Akun ini khusus untuk course ini. Datamu aman! 🔐
+                </p>
+                <p class="text-sm text-primary font-semibold text-center">
+                    💡 Sudah punya akun JadiKelas? Login langsung di sini!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const COURSE_ID = window.location.pathname.split('/').pop();
+    
+    // Load course info
+    fetch(`/api/course/data/${COURSE_ID}`)
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                document.getElementById('course-title-display').textContent = d.data.title;
+                document.getElementById('course-emoji').textContent = d.data.emoji || '📚';
+            }
+        });
+
+    function showAlert(message, type = 'error') {
+        const alert = document.getElementById('alert');
+        alert.className = type === 'error' 
+            ? 'block mb-4 p-4 rounded-xl border-2 border-red-200 bg-red-50 text-red-700'
+            : 'block mb-4 p-4 rounded-xl border-2 border-green-200 bg-green-50 text-green-700';
+        alert.innerHTML = `
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-${type === 'error' ? 'warning-circle' : 'check-circle'} text-xl"></i>
+                <span class="font-semibold">${message}</span>
+            </div>
+        `;
+    }
+
+    function showRegisterForm() {
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('register-form').classList.remove('hidden');
+        document.getElementById('alert').classList.add('hidden');
+    }
+
+    function showLoginForm() {
+        document.getElementById('register-form').classList.add('hidden');
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('alert').classList.add('hidden');
+    }
+
+    async function handleLogin() {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        if (!email || !password) {
+            showAlert('Email dan password wajib diisi!');
+            return;
+        }
+
+        const btn = document.getElementById('login-btn');
+        btn.disabled = true;
+        btn.textContent = 'Loading...';
+
+        try {
+            const res = await fetch('/api/course/student/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId: COURSE_ID, email, password })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                const message = data.student?.isMainAccount 
+                    ? '✨ Login berhasil dengan akun JadiKelas! Redirecting...' 
+                    : 'Login berhasil! Redirecting...';
+                showAlert(message, 'success');
+                setTimeout(() => {
+                    window.location.href = `/course/${COURSE_ID}`;
+                }, 1000);
+            } else {
+                showAlert(data.message || 'Login gagal. Coba lagi!');
+                btn.disabled = false;
+                btn.textContent = 'Masuk ke Course';
+            }
+        } catch (e) {
+            showAlert('Terjadi kesalahan. Cek koneksi internet!');
+            btn.disabled = false;
+            btn.textContent = 'Masuk ke Course';
+        }
+    }
+
+    async function handleRegister() {
+        const username = document.getElementById('reg-username').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+
+        if (!username || !email || !password) {
+            showAlert('Semua field wajib diisi!');
+            return;
+        }
+
+        if (password.length < 6) {
+            showAlert('Password minimal 6 karakter!');
+            return;
+        }
+
+        const btn = document.getElementById('reg-btn');
+        btn.disabled = true;
+        btn.textContent = 'Loading...';
+
+        try {
+            const res = await fetch('/api/course/student/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId: COURSE_ID, username, email, password })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                showAlert('Akun berhasil dibuat! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = `/course/${COURSE_ID}`;
+                }, 1000);
+            } else {
+                showAlert(data.message || 'Registrasi gagal. Coba lagi!');
+                btn.disabled = false;
+                btn.textContent = 'Daftar & Mulai Belajar';
+            }
+        } catch (e) {
+            showAlert('Terjadi kesalahan. Cek koneksi internet!');
+            btn.disabled = false;
+            btn.textContent = 'Daftar & Mulai Belajar';
+        }
+    }
+
+    // Enter key handler
+    document.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            if (!document.getElementById('register-form').classList.contains('hidden')) {
+                handleRegister();
+            } else {
+                handleLogin();
+            }
+        }
+    });
+    </script>
+</body>
+</html>

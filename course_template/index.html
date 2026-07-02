@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{courseTitle}} — JadiKelas.tech</title>
+    <!-- COURSE_DATA_INJECT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- Python Support (Pyodide) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <!-- SQL Support (SQL.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/sql.js@1.8.0/dist/sql-wasm.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace']
+                    },
+                    colors: {
+                        primary: '#6366f1', secondary: '#8b5cf6',
+                        dark: '#0F172A', darker: '#0B1120',
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'typing': 'typing 1.4s infinite ease-in-out both',
+                        'fadeUp': 'fadeUp 0.4s ease-out forwards',
+                        'slideIn': 'slideIn 0.3s ease-out forwards',
+                        'bounce': 'bounce 0.6s ease-in-out',
+                        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin': 'spin 1s linear infinite',
+                    },
+                    keyframes: {
+                        blob: { 
+                            '0%': {transform:'translate(0,0) scale(1)'}, 
+                            '33%': {transform:'translate(30px,-50px) scale(1.1)'}, 
+                            '66%': {transform:'translate(-20px,20px) scale(0.9)'}, 
+                            '100%': {transform:'translate(0,0) scale(1)'} 
+                        },
+                        typing: { 
+                            '0%,80%,100%': {transform:'scale(0)'}, 
+                            '40%': {transform:'scale(1)'} 
+                        },
+                        fadeUp: { 
+                            from:{opacity:'0',transform:'translateY(12px)'}, 
+                            to:{opacity:'1',transform:'translateY(0)'} 
+                        },
+                        slideIn: {
+                            from:{opacity:'0',transform:'translateX(-20px)'},
+                            to:{opacity:'1',transform:'translateX(0)'}
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar{width:8px;height:8px} 
+        ::-webkit-scrollbar-track{background:transparent} 
+        ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
+        ::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+        
+        .glass{
+            background:rgba(255,255,255,0.7);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border:1px solid rgba(255,255,255,0.5);
+            box-shadow:0 8px 32px 0 rgba(31,38,135,0.07);
+        }
+        
+        .text-gradient{
+            background-clip:text;
+            -webkit-background-clip:text;
+            color:transparent;
+            background-image:linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+        }
+        
+        .view-section{display:none;animation:fadeUp 0.4s ease-out forwards} 
+        .view-section.active{display:block}
+        
+        /* Learning Blocks */
+        .learning-block{
+            background:white;
+            border-radius:1.5rem;
+            padding:2rem;
+            margin-bottom:1.5rem;
+            box-shadow:0 4px 20px -2px rgba(0,0,0,0.06);
+            border:2px solid rgba(226,232,240,0.8);
+            transition:all 0.3s ease;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .learning-block::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:4px;
+            background:linear-gradient(90deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+            transform:scaleX(0);
+            transition:transform 0.3s ease;
+        }
+        
+        .learning-block:hover{
+            box-shadow:0 12px 40px -5px rgba(99,102,241,0.15);
+            border-color:rgba(99,102,241,0.3);
+            transform:translateY(-2px);
+        }
+        
+        .learning-block:hover::before{transform:scaleX(1)}
+        
+        .learning-block.completed{
+            border-color:#10b981;
+            background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        }
+        
+        .block-icon{
+            width:3.5rem;
+            height:3.5rem;
+            border-radius:1rem;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.8rem;
+            background:linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+            box-shadow:0 8px 20px -4px rgba(99,102,241,0.4);
+            margin-bottom:1rem;
+        }
+        
+        .analogy-box{
+            background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left:4px solid #f59e0b;
+            padding:1rem 1.25rem;
+            border-radius:0.75rem;
+            margin:1rem 0;
+        }
+        
+        .key-point{
+            display:flex;
+            align-items:start;
+            gap:0.75rem;
+            padding:0.75rem;
+            background:#f8fafc;
+            border-radius:0.75rem;
+            margin-bottom:0.5rem;
+            transition:all 0.2s;
+        }
+        
+        .key-point:hover{
+            background:#f1f5f9;
+            transform:translateX(4px);
+        }
+        
+        /* Code Playground */
+        .code-playground{
+            background:#1e293b;
+            border-radius:1rem;
+            overflow:hidden;
+            margin:1rem 0;
+            box-shadow:0 10px 40px -10px rgba(0,0,0,0.3);
+        }
+        
+        .playground-header{
+            background:#334155;
+            padding:0.75rem 1rem;
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            border-bottom:1px solid #475569;
+        }
+        
+        .playground-dot{
+            width:12px;
+            height:12px;
+            border-radius:50%;
+        }
+        
+        .playground-editor{
+            position:relative;
+            min-height:250px;
+        }
+        
+        .playground-output{
+            background:#0f172a;
+            border-top:2px solid #334155;
+            padding:1rem;
+            min-height:100px;
+            max-height:300px;
+            overflow-y:auto;
+            font-family:'Fira Code',monospace;
+            font-size:0.875rem;
+            color:#e2e8f0;
+        }
+        
+        .run-button{
+            background:linear-gradient(135deg, #10b981, #059669);
+            color:white;
+            padding:0.5rem 1.25rem;
+            border-radius:0.5rem;
+            border:none;
+            font-weight:600;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            transition:all 0.2s;
+            box-shadow:0 4px 12px -2px rgba(16,185,129,0.4);
+        }
+        
+        .run-button:hover{
+            background:linear-gradient(135deg, #059669, #047857);
+            transform:translateY(-2px);
+            box-shadow:0 6px 20px -2px rgba(16,185,129,0.5);
+        }
+        
+        /* Flashcard */
+        .flashcards-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+            gap:1.5rem;
+        }
+        
+        .flashcard-wrapper{perspective:1000px}
+        
+        .flashcard{
+            position:relative;
+            width:100%;
+            min-height:220px;
+            transform-style:preserve-3d;
+            transition:transform 0.6s cubic-bezier(.4,0,.2,1);
+            cursor:pointer;
+            border-radius:1.25rem;
+        }
+        
+        .flashcard.flipped{transform:rotateY(180deg)}
+        
+        .flashcard-front,.flashcard-back{
+            position:absolute;
+            inset:0;
+            backface-visibility:hidden;
+            -webkit-backface-visibility:hidden;
+            border-radius:1.25rem;
+            padding:2rem;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+        
+        .flashcard-front{
+            background:linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+            color:white;
+            box-shadow:0 10px 40px rgba(99,102,241,0.4);
+        }
+        
+        .flashcard-back{
+            background:white;
+            border:2px solid #e0e7ff;
+            transform:rotateY(180deg);
+            box-shadow:0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        .fc-emoji{font-size:2.5rem;margin-bottom:1rem}
+        .fc-text{font-size:1.05rem;font-weight:600;line-height:1.6;flex:1}
+        .flashcard-back .fc-text{color:#1e293b}
+        .fc-hint{font-size:0.75rem;opacity:0.7;display:flex;align-items:center;gap:0.4rem}
+        
+        .flashcard-wrapper.viewed .flashcard-front{
+            background:linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        /* Quiz */
+        .quiz-question{animation:fadeUp 0.35s ease-out}
+        .quiz-q-header{margin-bottom:1.5rem}
+        .quiz-q-num{font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.06em}
+        .quiz-q-progress-wrap{width:100%;background:#e2e8f0;border-radius:9999px;height:8px;margin-top:0.75rem;overflow:hidden}
+        .quiz-q-progress-bar{height:8px;background:linear-gradient(to right, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));border-radius:9999px;transition:width 0.4s ease}
+        .quiz-q-text{font-size:1.25rem;font-weight:700;color:#1e293b;margin-bottom:1.5rem;line-height:1.5}
+        .quiz-options{display:flex;flex-direction:column;gap:0.75rem}
+        
+        .quiz-option{
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            padding:1.25rem 1.5rem;
+            background:white;
+            border:2px solid #e2e8f0;
+            border-radius:1rem;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            text-align:left;
+            font-size:1rem;
+            color:#334155;
+            font-weight:500;
+        }
+        
+        .quiz-option:hover:not(:disabled){
+            border-color:#6366f1;
+            background:#eef2ff;
+            color:#4f46e5;
+            transform:translateX(4px);
+        }
+        
+        .quiz-option.correct{
+            border-color:#10b981;
+            background:#f0fdf4;
+            color:#065f46;
+            pointer-events:none;
+        }
+        
+        .quiz-option.wrong{
+            border-color:#ef4444;
+            background:#fef2f2;
+            color:#991b1b;
+            pointer-events:none;
+        }
+        
+        .quiz-opt-letter{
+            width:2.5rem;
+            height:2.5rem;
+            border-radius:0.75rem;
+            background:#f1f5f9;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:0.9rem;
+            flex-shrink:0;
+            transition:all 0.2s;
+        }
+        
+        .quiz-option.correct .quiz-opt-letter{background:#10b981;color:white}
+        .quiz-option.wrong .quiz-opt-letter{background:#ef4444;color:white}
+        
+        .quiz-explanation{
+            margin-top:1rem;
+            padding:1rem;
+            background:#f0f9ff;
+            border-left:4px solid #3b82f6;
+            border-radius:0.5rem;
+            color:#1e3a8a;
+            font-size:0.95rem;
+            animation:fadeUp 0.3s ease-out;
+        }
+        
+        /* Achievement popup */
+        .achievement-popup{
+            position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%) scale(0.8);
+            background:white;
+            border-radius:2rem;
+            padding:2.5rem;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);
+            z-index:9999;
+            text-align:center;
+            opacity:0;
+            pointer-events:none;
+            transition:all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .achievement-popup.show{
+            opacity:1;
+            transform:translate(-50%, -50%) scale(1);
+            pointer-events:auto;
+        }
+        
+        .achievement-icon{font-size:5rem;margin-bottom:1rem;animation:bounce 0.6s ease-in-out}
+        
+        /* XP Notification */
+        .xp-notification{
+            position:fixed;
+            top:5rem;
+            right:1.5rem;
+            background:linear-gradient(135deg, #fbbf24, #f59e0b);
+            color:white;
+            padding:1rem 1.5rem;
+            border-radius:1rem;
+            box-shadow:0 10px 30px rgba(245,158,11,0.4);
+            font-weight:700;
+            font-size:1.1rem;
+            z-index:9998;
+            transform:translateX(400px);
+            transition:transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .xp-notification.show{transform:translateX(0)}
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans overflow-hidden antialiased">
+    <!-- Ambient BG -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full opacity-30 blur-[120px] animate-blob" 
+             style="background:var(--primary-color, #6366f1)"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[40%] h-[40%] rounded-full opacity-20 blur-[120px] animate-blob" 
+             style="background:var(--secondary-color, #8b5cf6);animation-delay:2s"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-15 blur-[120px] animate-blob" 
+             style="background:#3b82f6;animation-delay:4s"></div>
+    </div>
+
+    <!-- XP Notification -->
+    <div id="xp-notification" class="xp-notification">
+        <div class="flex items-center gap-2">
+            <i class="ph-fill ph-star text-2xl"></i>
+            <span id="xp-text">+50 XP</span>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div id="achievement-popup" class="achievement-popup">
+        <div class="achievement-icon" id="achievement-icon">🏆</div>
+        <h3 class="text-2xl font-bold text-slate-800 mb-2" id="achievement-title">Achievement Unlocked!</h3>
+        <p class="text-slate-600" id="achievement-desc">Kamu berhasil mendapatkan achievement baru!</p>
+        <button onclick="closeAchievement()" class="mt-4 px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-bold">
+            Keren! 🎉
+        </button>
+    </div>
+
+    <div class="flex h-screen w-full relative">
+        <!-- Mobile Header -->
+        <div class="lg:hidden fixed top-0 left-0 right-0 h-16 glass z-40 flex items-center justify-between px-4">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl">
+                    <span id="mobile-emoji">📚</span>
+                </div>
+                <span class="font-bold text-lg text-dark">JadiKelas</span>
+            </div>
+            <button id="mobile-menu-btn" class="text-slate-600 hover:text-primary">
+                <i class="ph ph-list text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-80 glass border-r border-white/40 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 pt-16 lg:pt-0">
+            <!-- Logo -->
+            <div class="hidden lg:flex p-5 items-center gap-3 border-b border-slate-200/50">
+                <a href="/dashboard" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg text-2xl" id="sidebar-emoji">
+                        📚
+                    </div>
+                    <span class="font-extrabold text-xl tracking-tight text-dark">JadiKelas<span class="text-primary">.tech</span></span>
+                </a>
+            </div>
+            
+            <!-- Student Stats -->
+            <div class="p-5 border-b border-slate-200/50">
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-4 mb-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Level</p>
+                            <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600" id="student-level">1</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center gap-2 text-yellow-600 font-bold mb-1">
+                                <i class="ph-fill ph-coin text-xl"></i>
+                                <span id="student-coin">0</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-indigo-600 font-bold">
+                                <i class="ph-fill ph-lightning text-xl"></i>
+                                <span id="student-xp">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-orange-600 font-semibold text-sm">
+                        <i class="ph-fill ph-fire text-lg"></i>
+                        <span id="student-streak">0</span> hari streak 🔥
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2 text-sm font-semibold text-slate-600">
+                        <span>Progress Belajar</span>
+                        <span class="text-primary" id="progress-pct">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-primary to-secondary h-3 rounded-full transition-all duration-500" style="width:0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="switchView('learn')" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:border-primary/30 hover:scale-105 transition-all group">
+                        <i class="ph-fill ph-book-open text-2xl text-indigo-500"></i>
+                        <span class="text-xs font-semibold text-slate-600">Belajar</span>
+                    </button>
+                    <button onclick="switchView('quiz')" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:border-purple/30 hover:scale-105 transition-all group">
+                        <i class="ph-fill ph-brain text-2xl text-purple-500"></i>
+                        <span class="text-xs font-semibold text-slate-600">Quiz</span>
+                    </button>
+                    <button onclick="switchView('flashcards')" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:border-pink-300 hover:scale-105 transition-all group">
+                        <i class="ph-fill ph-cards text-2xl text-pink-500"></i>
+                        <span class="text-xs font-semibold text-slate-600">Cards</span>
+                    </button>
+                </div>
+                
+                <!-- Exam Button - NEW FEATURE -->
+                <div class="mt-3">
+                    <button onclick="goToExam()" class="block w-full p-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all group">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-2xl">
+                                    🎓
+                                </div>
+                                <div class="text-left">
+                                    <div class="font-bold text-white">Simulasi Ujian</div>
+                                    <div class="text-xs text-white/80">Uji kemampuanmu!</div>
+                                </div>
+                            </div>
+                            <i class="ph-fill ph-arrow-right text-xl group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Leaderboard Preview -->
+            <div class="px-5 pt-3 pb-2 border-b border-slate-200/50">
+                <button onclick="switchView('leaderboard')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/60 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <i class="ph-fill ph-trophy text-yellow-500 text-xl"></i>
+                        <span class="font-semibold text-slate-700 text-sm">Leaderboard</span>
+                    </div>
+                    <i class="ph ph-caret-right text-slate-400 group-hover:text-slate-600"></i>
+                </button>
+            </div>
+            
+            <!-- Learning Blocks Nav -->
+            <div class="flex-1 overflow-y-auto px-4 pb-4 pt-3">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Learning Path</p>
+                <nav class="space-y-1" id="blocks-nav">
+                    <!-- Dynamically filled -->
+                </nav>
+            </div>
+            
+            <!-- Student Profile -->
+            <div class="p-4 border-t border-slate-200/50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
+                            <span id="student-initial">S</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700" id="student-name">Student</p>
+                            <p class="text-xs text-slate-500" id="student-email">student@email.com</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition-colors">
+                        <i class="ph ph-sign-out text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 relative h-full overflow-y-auto overflow-x-hidden pt-16 lg:pt-0 scroll-smooth" id="main-scroll-area">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 pb-32">
+
+                <!-- VIEW: LEARNING -->
+                <div id="view-learn" class="view-section active">
+                    <div class="mb-8">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-primary text-sm font-bold mb-4 border border-indigo-200">
+                            <i class="ph-fill ph-magic-wand"></i> AI Generated Interactive Course
+                        </div>
+                        <h1 class="text-4xl lg:text-5xl font-black text-dark mb-4 tracking-tight leading-tight flex items-center gap-3">
+                            <span id="course-emoji" class="text-5xl">📚</span>
+                            <span id="course-title">Loading...</span>
+                        </h1>
+                        <p class="text-lg text-slate-600 leading-relaxed max-w-3xl" id="course-summary">Loading course summary...</p>
+                    </div>
+                    
+                    <!-- Welcome Card -->
+                    <div class="glass p-6 rounded-3xl mb-8 border border-white/60 relative overflow-hidden">
+                        <div class="flex items-start gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shrink-0 shadow-xl text-3xl">
+                                ✨
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-dark mb-2">Selamat Datang di Pengalaman Belajar Interaktif!</h3>
+                                <p class="text-slate-600 leading-relaxed text-sm mb-3">
+                                    Course ini dirancang seperti game belajar modern. Kamu akan mendapat <strong>XP</strong>, <strong>Coin</strong>, dan <strong>Achievement</strong> saat belajar! 🎮
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">🪙 Kumpulkan Coin</span>
+                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">⚡ Raih XP</span>
+                                    <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-semibold">🏆 Unlock Achievement</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">🤖 Tanya AI Tutor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Learning Blocks Container -->
+                    <div id="learning-blocks-container">
+                        <!-- Dynamically filled by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- VIEW: QUIZ -->
+                <div id="view-quiz" class="view-section">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-black text-dark flex items-center gap-3 mb-2">
+                            <i class="ph-fill ph-brain text-primary text-5xl"></i> 
+                            <span>Interactive Quiz</span>
+                        </h2>
+                        <p class="text-slate-500 text-lg">Uji pemahaman dan raih XP bonus! 🎯</p>
+                    </div>
+                    <div id="quiz-container">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+
+                <!-- VIEW: FLASHCARDS -->
+                <div id="view-flashcards" class="view-section">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-black text-dark flex items-center gap-3 mb-2">
+                            <i class="ph-fill ph-cards text-secondary text-5xl"></i>
+                            <span>Smart Flashcards</span>
+                        </h2>
+                        <p class="text-slate-500 text-lg">Hafalkan konsep dengan cara yang fun! 🃏</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-5 mb-6 border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-bold text-slate-600">Progress Flashcard</span>
+                            <span id="fc-progress-text" class="text-lg font-black text-primary">0 / 0</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-3">
+                            <div id="fc-progress-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500" style="width:0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcards-grid" id="flashcards-container">
+                        <!-- Dynamically filled -->
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <button onclick="resetFlashcards()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-sm inline-flex items-center gap-2">
+                            <i class="ph ph-arrow-counter-clockwise"></i>
+                            Reset Semua Flashcard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VIEW: LEADERBOARD -->
+                <div id="view-leaderboard" class="view-section">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-black text-dark flex items-center gap-3 mb-2">
+                            <i class="ph-fill ph-trophy text-yellow-500 text-5xl"></i>
+                            <span>Leaderboard</span>
+                        </h2>
+                        <p class="text-slate-500 text-lg">Kompetisi sehat untuk motivasi belajar! 🚀</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl p-6 mb-6 border-2 border-yellow-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-yellow-700 mb-1">Ranking Kamu</p>
+                                <p class="text-4xl font-black text-yellow-600" id="my-rank">#-</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-semibold text-yellow-700 mb-1">Total XP</p>
+                                <p class="text-3xl font-black text-yellow-600" id="my-total-xp">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3" id="leaderboard-list">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- AI TUTOR BUTTON -->
+        <button id="ai-tutor-btn" class="fixed bottom-6 right-6 lg:bottom-8 lg:right-8 w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary text-white shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 transition-transform z-50 group">
+            <i class="ph-fill ph-robot text-3xl group-hover:animate-bounce"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></span>
+        </button>
+
+        <!-- AI TUTOR PANEL -->
+        <div id="ai-tutor-panel" class="fixed bottom-28 right-6 lg:bottom-32 lg:right-8 w-[92vw] lg:w-[420px] h-[600px] max-h-[75vh] glass rounded-3xl shadow-2xl z-50 flex flex-col border-2 border-white/60 transform transition-all duration-300 opacity-0 translate-y-10 pointer-events-none">
+            <div class="p-5 border-b border-white/40 bg-white/50 rounded-t-3xl flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg">
+                            <i class="ph-fill ph-robot text-2xl"></i>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-dark text-base">Kela AI Tutor</h4>
+                        <p class="text-xs text-primary font-semibold flex items-center gap-1">
+                            <i class="ph-fill ph-circle text-[8px] animate-pulse"></i> Siap Membantu
+                        </p>
+                    </div>
+                </div>
+                <button id="close-ai-btn" class="w-10 h-10 rounded-full hover:bg-white/70 flex items-center justify-center text-slate-500 transition-all">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="chat-body" class="flex-1 overflow-y-auto p-5 space-y-3 bg-gradient-to-b from-white/30 to-white/10">
+                <div class="flex gap-2 max-w-[88%] animate-fadeUp">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shrink-0 text-sm shadow-md">
+                        <i class="ph-fill ph-robot"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl rounded-tl-md shadow-md border border-slate-100 text-sm text-slate-700 leading-relaxed">
+                        Hai! Aku Kela, AI Tutor kamu 👋<br><br>
+                        Tanyakan apa saja tentang materi yang sedang kamu pelajari. Aku siap bantu dengan bahasa yang mudah dipahami! 😊
+                    </div>
+                </div>
+                <div id="typing-indicator" class="hidden flex gap-2 max-w-[88%]">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+                        <i class="ph-fill ph-robot text-sm text-slate-500"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl rounded-tl-md shadow-sm border border-slate-100 flex gap-1.5 items-center">
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-typing" style="animation-delay:0s"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-typing" style="animation-delay:0.2s"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-typing" style="animation-delay:0.4s"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-white/70 border-t border-white/40 rounded-b-3xl">
+                <div class="relative flex items-center">
+                    <input type="text" id="chat-input" placeholder="Tanya Kela AI..." 
+                           class="w-full bg-white border-2 border-slate-200 rounded-2xl py-3 pl-5 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all shadow-sm font-medium">
+                    <button id="send-btn" class="absolute right-2 w-10 h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 rounded-xl text-white flex items-center justify-center shadow-lg transition-all">
+                        <i class="ph-fill ph-paper-plane-right text-lg"></i>
+                    </button>
+                </div>
+                <p class="text-[10px] text-center text-slate-400 mt-2">AI fokus pada materi course ini 🎯</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ══════════════════════════════════════════════════════════
+    // STATE & GLOBALS
+    // ══════════════════════════════════════════════════════════
+    // COURSE_ID and COURSE_DATA are injected by server above this script
+    let studentData = { xp: 0, coin: 0, level: 1, streak: 0 };
+    let completedBlocks = new Set();
+    let viewedFlashcards = new Set();
+    let quizState = { current: 0, correct: 0, total: 0 };
+    let progressSaveTimer = null;
+    let codeEditors = {}; // Store Ace editor instances
+    let pyodideReady = false;
+    let pyodideInstance = null;
+    let sqlDB = null;
+    let sqlReady = false;
+    
+    // Initialize Pyodide (Python runtime)
+    async function initPyodide() {
+        if (pyodideReady) return pyodideInstance;
+        try {
+            console.log('🐍 Loading Pyodide...');
+            pyodideInstance = await loadPyodide({
+                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+            });
+            pyodideReady = true;
+            console.log('✅ Pyodide ready!');
+            return pyodideInstance;
+        } catch (error) {
+            console.error('❌ Error loading Pyodide:', error);
+            return null;
+        }
+    }
+    
+    // Initialize SQL.js (SQL runtime)
+    async function initSQL() {
+        if (sqlReady && sqlDB) return sqlDB;
+        try {
+            console.log('🗄️ Loading SQL.js...');
+            const SQL = await initSqlJs({
+                locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.8.0/dist/${file}`
+            });
+            sqlDB = new SQL.Database();
+            sqlReady = true;
+            console.log('✅ SQL.js ready!');
+            return sqlDB;
+        } catch (error) {
+            console.error('❌ Error loading SQL.js:', error);
+            return null;
+        }
+    }
+    
+    // Preload Python and SQL on page load (with delay to not block UI)
+    setTimeout(() => {
+        initPyodide();
+        initSQL();
+    }, 2000);
+
+    // ══════════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Check if COURSE_ID and COURSE_DATA exist (injected by server)
+        if (typeof COURSE_ID === 'undefined' || typeof COURSE_DATA === 'undefined') {
+            console.error('FATAL: COURSE_ID or COURSE_DATA not injected by server!');
+            document.body.innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:1rem;font-family:sans-serif;">
+                    <div style="font-size:4rem;">⚠️</div>
+                    <h1 style="color:#ef4444;font-size:1.5rem;font-weight:bold;">Error: Course Data Missing</h1>
+                    <p style="color:#64748b;max-width:400px;text-align:center;">
+                        Data course tidak ditemukan. Silakan kembali ke dashboard dan coba lagi.
+                    </p>
+                    <a href="/dashboard" style="padding:0.75rem 1.5rem;background:#6366f1;color:white;border-radius:0.5rem;text-decoration:none;font-weight:600;">
+                        Kembali ke Dashboard
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        // Check auth
+        await checkAuth();
+        await loadStudentData();
+        loadCourseData();
+        setupEventListeners();
+        updateTheme();
+    });
+
+    async function checkAuth() {
+        try {
+            const res = await fetch(`/api/course/student/me/${COURSE_ID}`);
+            const data = await res.json();
+            if (!data.success) {
+                window.location.href = `/course-auth/${COURSE_ID}`;
+            }
+        } catch (e) {
+            console.error('Auth check error:', e);
+            window.location.href = `/course-auth/${COURSE_ID}`;
+        }
+    }
+
+    async function loadStudentData() {
+        try {
+            const res = await fetch(`/api/course/student/me/${COURSE_ID}`);
+            const data = await res.json();
+            if (data.success) {
+                const s = data.student;
+                studentData = {
+                    studentId: s.studentId,
+                    username: s.username,
+                    email: s.email,
+                    xp: s.xp || 0,
+                    coin: s.coin || 0,
+                    level: s.level || 1,
+                    streak: s.streak || 0
+                };
+                completedBlocks = new Set(s.completedBlocks || []);
+                updateStudentUI();
+            }
+        } catch (e) {
+            console.error('Load student error:', e);
+        }
+    }
+
+    function updateStudentUI() {
+        document.getElementById('student-level').textContent = studentData.level;
+        document.getElementById('student-xp').textContent = studentData.xp;
+        document.getElementById('student-coin').textContent = studentData.coin;
+        document.getElementById('student-streak').textContent = studentData.streak;
+        document.getElementById('student-name').textContent = studentData.username;
+        document.getElementById('student-email').textContent = studentData.email;
+        document.getElementById('student-initial').textContent = (studentData.username || 'S')[0].toUpperCase();
+    }
+
+    function loadCourseData() {
+        if (!COURSE_DATA) {
+            console.error('COURSE_DATA not found');
+            alert('Error: Data course tidak dapat dimuat. Silakan refresh halaman atau hubungi admin.');
+            return;
+        }
+        
+        console.log('Loading course data:', COURSE_DATA.title);
+        
+        // Update basic info
+        try {
+            document.getElementById('course-title').textContent = COURSE_DATA.title || 'Course';
+            document.getElementById('course-summary').textContent = COURSE_DATA.summary || '';
+            document.getElementById('course-emoji').textContent = COURSE_DATA.emoji || '📚';
+            document.getElementById('sidebar-emoji').textContent = COURSE_DATA.emoji || '📚';
+            document.getElementById('mobile-emoji').textContent = COURSE_DATA.emoji || '📚';
+            document.title = (COURSE_DATA.title || 'Course') + ' — JadiKelas.tech';
+        } catch (e) {
+            console.error('Error updating course info:', e);
+        }
+        
+        // Render learning blocks
+        try {
+            renderLearningBlocks();
+            renderBlocksNav();
+        } catch (e) {
+            console.error('Error rendering learning blocks:', e);
+        }
+        
+        // Render quiz and flashcards
+        try {
+            renderQuiz();
+            renderFlashcards();
+        } catch (e) {
+            console.error('Error rendering quiz/flashcards:', e);
+        }
+        
+        // Load leaderboard
+        try {
+            loadLeaderboard();
+        } catch (e) {
+            console.error('Error loading leaderboard:', e);
+        }
+    }
+
+    function updateTheme() {
+        const color = COURSE_DATA?.color || '#6366f1';
+        const secondary = COURSE_DATA?.secondaryColor || '#8b5cf6';
+        document.documentElement.style.setProperty('--primary-color', color);
+        document.documentElement.style.setProperty('--secondary-color', secondary);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // LEARNING BLOCKS RENDERING
+    // ══════════════════════════════════════════════════════════
+    function renderLearningBlocks() {
+        const container = document.getElementById('learning-blocks-container');
+        if (!container) {
+            console.error('learning-blocks-container not found');
+            return;
+        }
+        
+        if (!COURSE_DATA.learningBlocks || !Array.isArray(COURSE_DATA.learningBlocks)) {
+            console.error('No learningBlocks found in COURSE_DATA');
+            container.innerHTML = `
+                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6 text-center">
+                    <div class="text-5xl mb-3">⚠️</div>
+                    <h3 class="font-bold text-lg text-yellow-800 mb-2">Belum Ada Materi</h3>
+                    <p class="text-yellow-700">Course ini belum memiliki learning blocks.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log(`Rendering ${COURSE_DATA.learningBlocks.length} learning blocks`);
+        
+        COURSE_DATA.learningBlocks.forEach((block, idx) => {
+            try {
+                const blockEl = createBlockElement(block, idx);
+                container.appendChild(blockEl);
+            } catch (e) {
+                console.error(`Error rendering block ${idx}:`, e);
+            }
+        });
+        
+        // Setup event listeners for explain buttons
+        setupExplainButtonListeners();
+    }
+    
+    function setupExplainButtonListeners() {
+        document.querySelectorAll('.explain-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const blockId = this.dataset.blockId;
+                const blockTitle = this.dataset.blockTitle;
+                const blockType = this.dataset.blockType;
+                explainSimple(blockId, blockTitle, blockType);
+            });
+        });
+    }
+
+    function createBlockElement(block, idx) {
+        const blockId = `block-${idx}`;
+        const isCompleted = completedBlocks.has(blockId);
+        
+        const div = document.createElement('div');
+        div.className = `learning-block ${isCompleted ? 'completed' : ''}`;
+        div.id = blockId;
+        div.dataset.blockIndex = idx;
+        
+        let content = '';
+        
+        // Header dengan icon dan tombol Explain
+        content += `
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="block-icon">${block.icon || '📘'}</div>
+                    <h3 class="text-2xl font-black text-slate-800">${escapeHtml(block.title)}</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="explain-btn px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center gap-2"
+                            data-block-id="${blockId}" 
+                            data-block-title="${escapeHtml(block.title)}" 
+                            data-block-type="${block.type}"
+                            title="Jelaskan dengan bahasa yang mudah dipahami">
+                        ✨ Jelaskan Lebih Sederhana
+                    </button>
+                    ${isCompleted ? '<div class="text-green-500 text-3xl">✓</div>' : ''}
+                </div>
+            </div>
+        `;
+        
+        // Render berdasarkan type
+        switch (block.type) {
+            case 'concept_card':
+                content += renderConceptCard(block);
+                break;
+            case 'visual_summary':
+                content += renderVisualSummary(block);
+                break;
+            case 'step_by_step':
+                content += renderStepByStep(block);
+                break;
+            case 'analogy_card':
+                content += renderAnalogyCard(block);
+                break;
+            case 'key_terms':
+                content += renderKeyTerms(block);
+                break;
+            case 'code_playground':
+                content += renderCodePlayground(block, blockId);
+                break;
+            default:
+                content += `<p class="text-slate-600">${escapeHtml(block.explanation || '')}</p>`;
+        }
+        
+        // Complete button
+        if (!isCompleted) {
+            content += `
+                <div class="mt-6 pt-6 border-t border-slate-200">
+                    <button onclick="completeBlock('${blockId}')" 
+                            class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold hover:shadow-lg transition-all inline-flex items-center gap-2">
+                        <i class="ph-fill ph-check-circle text-xl"></i>
+                        Tandai Selesai & Raih XP
+                    </button>
+                </div>
+            `;
+        }
+        
+        div.innerHTML = content;
+        
+        // Init code editor if playground
+        if (block.type === 'code_playground') {
+            setTimeout(() => initCodeEditor(blockId, block), 100);
+        }
+        
+        return div;
+    }
+
+    function renderConceptCard(block) {
+        return `
+            <div class="space-y-4">
+                <p class="text-lg text-slate-700 leading-relaxed">${escapeHtml(block.explanation)}</p>
+                
+                ${block.analogy ? `
+                    <div class="analogy-box">
+                        <div class="flex items-center gap-2 font-bold text-yellow-800 mb-2">
+                            <i class="ph-fill ph-lightbulb text-xl"></i>
+                            Analogi Mudah
+                        </div>
+                        <p class="text-yellow-900 leading-relaxed">${escapeHtml(block.analogy)}</p>
+                    </div>
+                ` : ''}
+                
+                ${block.highlight ? `
+                    <div class="inline-block px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-mono font-semibold border-2 border-indigo-200">
+                        ${escapeHtml(block.highlight)}
+                    </div>
+                ` : ''}
+                
+                ${block.keyPoints && block.keyPoints.length ? `
+                    <div class="mt-4">
+                        <p class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                            <i class="ph-fill ph-check-circle text-green-500"></i>
+                            Poin Penting:
+                        </p>
+                        ${block.keyPoints.map(point => `
+                            <div class="key-point">
+                                <i class="ph-fill ph-caret-right text-primary text-xl"></i>
+                                <span class="text-slate-700">${escapeHtml(point)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function renderVisualSummary(block) {
+        if (!block.items || !block.items.length) return '';
+        return `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${block.items.map(item => `
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border-2 border-blue-100 hover:shadow-lg transition-all">
+                        <div class="text-3xl mb-2">${item.icon || '📌'}</div>
+                        <div class="font-bold text-slate-800 mb-1">${escapeHtml(item.label)}</div>
+                        <div class="text-slate-600 text-sm">${escapeHtml(item.value)}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    function renderStepByStep(block) {
+        if (!block.steps || !block.steps.length) return '';
+        return `
+            <div class="space-y-4">
+                ${block.steps.map((step, i) => `
+                    <div class="flex gap-4 p-4 bg-gradient-to-r from-slate-50 to-transparent rounded-xl border-l-4 border-primary hover:shadow-md transition-all">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary text-white font-black flex items-center justify-center text-lg shadow-lg">
+                            ${step.number || i + 1}
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-800 mb-1">${escapeHtml(step.title)}</h4>
+                            <p class="text-slate-600 text-sm mb-2">${escapeHtml(step.description)}</p>
+                            ${step.tip ? `
+                                <div class="text-xs bg-yellow-50 text-yellow-800 px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5">
+                                    <i class="ph-fill ph-star"></i>
+                                    <span>${escapeHtml(step.tip)}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    function renderAnalogyCard(block) {
+        return `
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border-2 border-purple-200">
+                <div class="flex items-center gap-2 text-purple-700 font-bold mb-4">
+                    <i class="ph-fill ph-lightbulb text-2xl"></i>
+                    <span>Bayangkan Seperti Ini:</span>
+                </div>
+                <p class="text-slate-700 text-lg mb-4">${escapeHtml(block.realWorld)}</p>
+                <div class="bg-white p-4 rounded-xl border border-purple-200 mb-3">
+                    <p class="text-slate-600"><strong>Koneksi:</strong> ${escapeHtml(block.connection)}</p>
+                </div>
+                <div class="text-sm text-purple-700 font-semibold">
+                    💡 ${escapeHtml(block.insight)}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderKeyTerms(block) {
+        if (!block.terms || !block.terms.length) return '';
+        return `
+            <div class="space-y-3">
+                ${block.terms.map(term => `
+                    <div class="bg-white p-5 rounded-xl border-2 border-slate-200 hover:border-indigo-300 transition-all">
+                        <div class="font-mono font-bold text-lg text-indigo-600 mb-2">${escapeHtml(term.term)}</div>
+                        <p class="text-slate-700 mb-2">${escapeHtml(term.definition)}</p>
+                        ${term.example ? `
+                            <div class="text-sm text-slate-500 bg-slate-50 px-3 py-2 rounded-lg">
+                                <strong>Contoh:</strong> ${escapeHtml(term.example)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // INTERACTIVE CODE PLAYGROUND 🚀
+    // ══════════════════════════════════════════════════════════
+    function renderCodePlayground(block, blockId) {
+        const editorId = `editor-${blockId}`;
+        const outputId = `output-${blockId}`;
+        const language = (block.language || 'javascript').toLowerCase();
+        
+        return `
+            <div class="my-6">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200 mb-4">
+                    <div class="flex items-center gap-2 text-green-700 font-bold mb-2">
+                        <i class="ph-fill ph-code text-xl"></i>
+                        Interactive Playground - ${escapeHtml(language.toUpperCase())}
+                    </div>
+                    <p class="text-sm text-green-700">
+                        ${block.instruction || 'Edit code di bawah dan klik "Run Code" untuk melihat hasilnya! 🎮'}
+                    </p>
+                </div>
+                
+                <div class="code-playground">
+                    <div class="playground-header">
+                        <div class="playground-dot bg-red-500"></div>
+                        <div class="playground-dot bg-yellow-500"></div>
+                        <div class="playground-dot bg-green-500"></div>
+                        <span class="text-slate-300 text-sm font-mono ml-2">${escapeHtml(block.fileName || 'playground.' + (language === 'python' ? 'py' : language === 'html' ? 'html' : 'js'))}</span>
+                        <div class="flex-1"></div>
+                        <button onclick="runCode('${blockId}', '${language}')" class="run-button">
+                            <i class="ph-fill ph-play"></i>
+                            Run Code
+                        </button>
+                    </div>
+                    <div class="playground-editor" id="${editorId}">${escapeHtml(block.defaultCode || getDefaultCode(language))}</div>
+                    <div class="playground-output">
+                        <div class="text-xs text-slate-400 mb-2 flex items-center gap-2">
+                            <i class="ph-fill ph-terminal"></i>
+                            <span>Output:</span>
+                        </div>
+                        <div id="${outputId}" class="text-green-400 font-mono"></div>
+                    </div>
+                </div>
+                
+                ${block.hint ? `
+                    <div class="mt-4 bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
+                        <div class="flex items-center gap-2 text-blue-700 font-bold mb-2">
+                            <i class="ph-fill ph-info"></i>
+                            Hint:
+                        </div>
+                        <p class="text-sm text-blue-700">${escapeHtml(block.hint)}</p>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function getDefaultCode(language) {
+        const defaults = {
+            javascript: `// Coba edit code ini!\nconsole.log("Hello, JadiKelas! 🚀");\n\nconst nama = "Student";\nconsole.log("Selamat belajar, " + nama);`,
+            python: `# Coba edit code ini!\nprint("Hello, JadiKelas! 🚀")\n\nnama = "Student"\nprint(f"Selamat belajar, {nama}")`,
+            html: `<!DOCTYPE html>\n<html>\n<head>\n  <title>Playground</title>\n</head>\n<body>\n  <h1>Hello, JadiKelas! 🚀</h1>\n  <p>Edit HTML ini sesuka hati!</p>\n</body>\n</html>`,
+            css: `.container {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  padding: 20px;\n  border-radius: 10px;\n  color: white;\n}`,
+            sql: `-- Coba edit SQL ini!\nCREATE TABLE siswa (\n  id INTEGER PRIMARY KEY,\n  nama TEXT NOT NULL,\n  nilai INTEGER\n);\n\nINSERT INTO siswa VALUES (1, 'Budi', 90);\nINSERT INTO siswa VALUES (2, 'Ani', 95);\n\nSELECT * FROM siswa;`,
+            java: `// Java playground (preview only)\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello, JadiKelas!");\n    String nama = "Student";\n    System.out.println("Selamat belajar, " + nama);\n  }\n}`
+        };
+        return defaults[language] || `// Code playground for ${language}\nconsole.log("Start coding!");`;
+    }
+
+    function initCodeEditor(blockId, block) {
+        const editorId = `editor-${blockId}`;
+        const editorEl = document.getElementById(editorId);
+        if (!editorEl) return;
+        
+        const language = (block.language || 'javascript').toLowerCase();
+        const modeMap = {
+            javascript: 'javascript',
+            python: 'python',
+            html: 'html',
+            css: 'css',
+            java: 'java',
+            cpp: 'c_cpp',
+            sql: 'sql'
+        };
+        
+        const editor = ace.edit(editorId);
+        editor.setTheme('ace/theme/monokai');
+        editor.session.setMode(`ace/mode/${modeMap[language] || 'javascript'}`);
+        editor.setOptions({
+            fontSize: '14px',
+            showPrintMargin: false,
+            showGutter: true,
+            highlightActiveLine: true,
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        
+        codeEditors[blockId] = editor;
+    }
+
+    function runCode(blockId, language) {
+        const editor = codeEditors[blockId];
+        if (!editor) return;
+        
+        const code = editor.getValue();
+        const outputEl = document.getElementById(`output-${blockId}`);
+        
+        outputEl.innerHTML = '<div class="text-yellow-400 mb-2">⚡ Running code...</div>';
+        
+        try {
+            if (language === 'javascript') {
+                runJavaScript(code, outputEl);
+            } else if (language === 'python') {
+                runPython(code, outputEl);
+            } else if (language === 'html') {
+                runHTML(code, outputEl);
+            } else if (language === 'sql') {
+                runSQL(code, outputEl);
+            } else if (language === 'java') {
+                outputEl.innerHTML = `<div class="text-blue-400">
+                    <div class="mb-2">📝 Java Code Preview:</div>
+                    <pre class="text-slate-300 bg-slate-800 p-3 rounded text-sm overflow-auto">${escapeHtml(code)}</pre>
+                    <div class="mt-2 text-yellow-400">⚠️ Java compilation tidak didukung di browser. Gunakan IDE seperti IntelliJ IDEA atau Eclipse untuk menjalankan code Java.</div>
+                </div>`;
+            } else if (language === 'css') {
+                outputEl.innerHTML = `<div class="text-blue-400">
+                    <div class="mb-2">🎨 CSS Preview:</div>
+                    <pre class="text-slate-300 bg-slate-800 p-3 rounded text-sm overflow-auto">${escapeHtml(code)}</pre>
+                    <div class="mt-2 text-slate-400">💡 Tip: Gabungkan dengan HTML playground untuk melihat hasil CSS.</div>
+                </div>`;
+            } else {
+                outputEl.innerHTML = `<div class="text-yellow-400">⚠️ ${language.toUpperCase()} playground coming soon!</div>`;
+            }
+            
+            // Award XP for running code
+            awardXP(10, 'Eksekusi code');
+            
+        } catch (error) {
+            outputEl.innerHTML = `<div class="text-red-400">❌ Error: ${escapeHtml(error.message)}</div>`;
+        }
+    }
+
+    function runJavaScript(code, outputEl) {
+        const logs = [];
+        const originalConsoleLog = console.log;
+        
+        console.log = (...args) => {
+            logs.push(args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' '));
+        };
+        
+        try {
+            eval(code);
+            console.log = originalConsoleLog;
+            
+            if (logs.length === 0) {
+                outputEl.innerHTML = '<div class="text-slate-400">✓ Code dijalankan tanpa output</div>';
+            } else {
+                outputEl.innerHTML = '<div class="text-green-400">✓ Output:</div>' + 
+                    logs.map(log => `<div class="mt-1 text-slate-200">${escapeHtml(log)}</div>`).join('');
+            }
+        } catch (error) {
+            console.log = originalConsoleLog;
+            throw error;
+        }
+    }
+
+    function runHTML(code, outputEl) {
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'width:100%;height:300px;border:2px solid #334155;border-radius:8px;background:white';
+        outputEl.innerHTML = '<div class="text-green-400 mb-2">✓ HTML Preview:</div>';
+        outputEl.appendChild(iframe);
+        
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(code);
+        iframeDoc.close();
+    }
+
+    async function runPython(code, outputEl) {
+        try {
+            if (!pyodideReady) {
+                outputEl.innerHTML = '<div class="text-yellow-400 mb-2">⏳ Loading Python interpreter...</div>';
+                const pyodide = await initPyodide();
+                if (!pyodide) {
+                    outputEl.innerHTML = '<div class="text-red-400">❌ Gagal memuat Python. Coba refresh halaman.</div>';
+                    return;
+                }
+            }
+            
+            // Capture stdout
+            pyodideInstance.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+            `);
+            
+            // Run user code
+            try {
+                pyodideInstance.runPython(code);
+                
+                // Get output
+                const stdout = pyodideInstance.runPython('sys.stdout.getvalue()');
+                
+                if (stdout && stdout.trim()) {
+                    outputEl.innerHTML = '<div class="text-green-400">✓ Output:</div>' + 
+                        stdout.split('\n').map(line => 
+                            `<div class="mt-1 text-slate-200">${escapeHtml(line)}</div>`
+                        ).join('');
+                } else {
+                    outputEl.innerHTML = '<div class="text-slate-400">✓ Code dijalankan tanpa output</div>';
+                }
+            } catch (pythonError) {
+                // Extract error message
+                let errorMsg = String(pythonError);
+                outputEl.innerHTML = `<div class="text-red-400">❌ Python Error:<br><pre class="mt-2 text-sm">${escapeHtml(errorMsg)}</pre></div>`;
+            }
+            
+        } catch (error) {
+            outputEl.innerHTML = `<div class="text-red-400">❌ Error: ${escapeHtml(error.message)}</div>`;
+        }
+    }
+
+    async function runSQL(code, outputEl) {
+        try {
+            if (!sqlReady) {
+                outputEl.innerHTML = '<div class="text-yellow-400 mb-2">⏳ Loading SQL engine...</div>';
+                const db = await initSQL();
+                if (!db) {
+                    outputEl.innerHTML = '<div class="text-red-400">❌ Gagal memuat SQL. Coba refresh halaman.</div>';
+                    return;
+                }
+            }
+            
+            // Split multiple SQL statements
+            const statements = code.split(';').map(s => s.trim()).filter(s => s.length > 0);
+            let results = [];
+            let lastResult = null;
+            
+            for (const statement of statements) {
+                try {
+                    // Execute statement
+                    const result = sqlDB.exec(statement);
+                    
+                    if (result && result.length > 0) {
+                        lastResult = result[0];
+                        
+                        // Check if it's a SELECT query
+                        if (statement.trim().toUpperCase().startsWith('SELECT')) {
+                            results.push({
+                                type: 'select',
+                                statement: statement,
+                                data: result[0]
+                            });
+                        } else {
+                            results.push({
+                                type: 'modify',
+                                statement: statement,
+                                message: 'Query berhasil dieksekusi'
+                            });
+                        }
+                    } else {
+                        results.push({
+                            type: 'modify',
+                            statement: statement,
+                            message: 'Query berhasil dieksekusi'
+                        });
+                    }
+                } catch (sqlError) {
+                    results.push({
+                        type: 'error',
+                        statement: statement,
+                        error: String(sqlError)
+                    });
+                }
+            }
+            
+            // Render results
+            let html = '<div class="text-green-400 mb-2">✓ SQL Results:</div>';
+            
+            for (const result of results) {
+                if (result.type === 'select') {
+                    // Render table
+                    const { columns, values } = result.data;
+                    html += `
+                        <div class="my-3 bg-slate-800 rounded-lg p-3 overflow-x-auto">
+                            <div class="text-xs text-slate-400 mb-2">${escapeHtml(result.statement)}</div>
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-600">
+                                        ${columns.map(col => `<th class="text-left px-2 py-1 text-blue-300 font-semibold">${escapeHtml(col)}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${values.map(row => `
+                                        <tr class="border-b border-slate-700">
+                                            ${row.map(cell => `<td class="px-2 py-1 text-slate-200">${escapeHtml(String(cell))}</td>`).join('')}
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            <div class="text-xs text-slate-500 mt-2">${values.length} rows returned</div>
+                        </div>
+                    `;
+                } else if (result.type === 'modify') {
+                    html += `<div class="text-sm text-slate-300 my-2">✓ ${escapeHtml(result.message)}</div>`;
+                } else if (result.type === 'error') {
+                    html += `
+                        <div class="my-2 bg-red-900/30 border border-red-500/50 rounded p-2">
+                            <div class="text-xs text-slate-400 mb-1">${escapeHtml(result.statement)}</div>
+                            <div class="text-red-300 text-sm">❌ ${escapeHtml(result.error)}</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            outputEl.innerHTML = html;
+            
+        } catch (error) {
+            outputEl.innerHTML = `<div class="text-red-400">❌ Error: ${escapeHtml(error.message)}</div>`;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // GAMIFICATION
+    // ══════════════════════════════════════════════════════════
+    async function completeBlock(blockId) {
+        if (completedBlocks.has(blockId)) return;
+        
+        completedBlocks.add(blockId);
+        const blockEl = document.getElementById(blockId);
+        blockEl.classList.add('completed');
+        blockEl.querySelector('.mt-6').remove();
+        
+        // Add checkmark
+        const header = blockEl.querySelector('.flex.items-start');
+        header.innerHTML += '<div class="text-green-500 text-3xl animate-bounce">✓</div>';
+        
+        // Call backend
+        try {
+            const res = await fetch('/api/course/gamification/reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    action: 'complete_block',
+                    blockId
+                })
+            });
+            
+            const data = await res.json();
+            if (data.success) {
+                studentData.xp   = data.totalXp;
+                studentData.coin = data.totalCoin;
+                studentData.level = data.level;
+                updateStudentUI();
+                
+                showXPNotification(data.xpGained, data.coinGained);
+                
+                if (data.leveledUp) {
+                    showLevelUp(data.level);
+                }
+                
+                if (data.newAchievements && data.newAchievements.length > 0) {
+                    data.newAchievements.forEach((ach, i) => {
+                        setTimeout(() => showAchievement(ach), i * 1000);
+                    });
+                }
+                
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        } catch (e) {
+            console.error('Complete block error:', e);
+        }
+        
+        saveProgress();
+    }
+
+    function showXPNotification(xp, coin) {
+        const notif = document.getElementById('xp-notification');
+        const text = `+${xp} XP  •  +${coin} 🪙`;
+        document.getElementById('xp-text').textContent = text;
+        notif.classList.add('show');
+        setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    function showAchievement(achievement) {
+        const popup = document.getElementById('achievement-popup');
+        document.getElementById('achievement-icon').textContent = achievement.icon;
+        document.getElementById('achievement-title').textContent = achievement.title;
+        document.getElementById('achievement-desc').textContent = achievement.description;
+        popup.classList.add('show');
+        
+        confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { y: 0.5 }
+        });
+    }
+
+    function closeAchievement() {
+        document.getElementById('achievement-popup').classList.remove('show');
+    }
+
+    function showLevelUp(newLevel) {
+        showAchievement({
+            icon: '🎉',
+            title: `Level ${newLevel} Unlocked!`,
+            description: 'Kamu semakin hebat! Terus belajar!'
+        });
+    }
+
+    async function awardXP(amount, reason) {
+        studentData.xp += amount;
+        updateStudentUI();
+        showXPNotification(amount, 0);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // QUIZ
+    // ══════════════════════════════════════════════════════════
+    function renderQuiz() {
+        const container = document.getElementById('quiz-container');
+        if (!COURSE_DATA.quiz || !COURSE_DATA.quiz.length) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-10">Belum ada quiz untuk course ini.</p>';
+            return;
+        }
+        
+        quizState.total = COURSE_DATA.quiz.length;
+        let html = '';
+        
+        COURSE_DATA.quiz.forEach((q, i) => {
+            html += `
+                <div class="quiz-question bg-white rounded-2xl p-8 shadow-lg border-2 border-slate-200" id="quiz-q-${i}" ${i > 0 ? 'style="display:none"' : ''}>
+                    <div class="quiz-q-header">
+                        <span class="quiz-q-num">Soal ${i + 1} dari ${quizState.total}</span>
+                        <div class="quiz-q-progress-wrap">
+                            <div class="quiz-q-progress-bar" style="width:${(i / quizState.total) * 100}%"></div>
+                        </div>
+                    </div>
+                    <h3 class="quiz-q-text">${escapeHtml(q.question)}</h3>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, oi) => `
+                            <button class="quiz-option" onclick="answerQuiz(${i}, '${escapeHtml(opt).replace(/'/g, "\\'")}', '${escapeHtml(q.answer).replace(/'/g, "\\'")}', '${escapeHtml(q.explanation || '').replace(/'/g, "\\'")}', ${q.xpReward || 50})">
+                                <span class="quiz-opt-letter">${String.fromCharCode(65 + oi)}</span>
+                                <span>${escapeHtml(opt)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="quiz-exp-${i}" class="hidden"></div>
+                </div>
+            `;
+        });
+        
+        // Result screen
+        html += `
+            <div id="quiz-result" class="bg-white rounded-3xl p-10 text-center shadow-2xl border-2 border-indigo-200" style="display:none">
+                <div id="quiz-result-emoji" class="text-8xl mb-4">🎉</div>
+                <h3 class="text-4xl font-black text-slate-800 mb-3">Quiz Selesai!</h3>
+                <p class="text-xl text-slate-600 mb-6">Skor kamu: <span id="quiz-final-score" class="font-black text-primary">0</span></p>
+                <div class="w-full max-w-md mx-auto mb-6">
+                    <div class="w-full bg-slate-200 rounded-full h-4">
+                        <div id="quiz-result-bar" class="bg-gradient-to-r from-primary to-secondary h-4 rounded-full transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <p id="quiz-result-xp" class="text-2xl font-bold text-green-600 mb-6">+0 XP  •  +0 🪙</p>
+                <button onclick="retryQuiz()" class="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-2xl font-bold text-lg hover:opacity-90 transition-all inline-flex items-center gap-3 shadow-lg">
+                    <i class="ph ph-arrow-counter-clockwise text-2xl"></i>
+                    Coba Lagi
+                </button>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+    }
+
+    async function answerQuiz(qIdx, selected, correct, explanation, xpReward) {
+        const qEl = document.getElementById(`quiz-q-${qIdx}`);
+        const opts = qEl.querySelectorAll('.quiz-option');
+        opts.forEach(btn => btn.disabled = true);
+        
+        const isCorrect = selected === correct;
+        
+        // Highlight answer
+        opts.forEach(btn => {
+            const btnText = btn.querySelector('span:last-child').textContent;
+            if (btnText === selected) {
+                btn.classList.add(isCorrect ? 'correct' : 'wrong');
+            }
+            if (btnText === correct && !isCorrect) {
+                btn.classList.add('correct');
+            }
+        });
+        
+        // Show explanation
+        if (explanation) {
+            const expEl = document.getElementById(`quiz-exp-${qIdx}`);
+            expEl.className = 'quiz-explanation';
+            expEl.innerHTML = `
+                <div class="flex items-start gap-2">
+                    <i class="ph-fill ph-info text-blue-500 text-xl"></i>
+                    <div><strong>Penjelasan:</strong> ${escapeHtml(explanation)}</div>
+                </div>
+            `;
+        }
+        
+        if (isCorrect) {
+            quizState.correct++;
+            confetti({ particleCount: 50, angle: 90, spread: 45, origin: { x: 0.5, y: 0.8 } });
+            
+            // Award XP
+            await fetch('/api/course/gamification/reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    action: 'quiz_correct'
+                })
+            });
+        }
+        
+        setTimeout(() => {
+            qEl.style.display = 'none';
+            const nextQ = document.getElementById(`quiz-q-${qIdx + 1}`);
+            if (nextQ) {
+                nextQ.style.display = 'block';
+                const bar = nextQ.querySelector('.quiz-q-progress-bar');
+                if (bar) bar.style.width = `${((qIdx + 1) / quizState.total) * 100}%`;
+            } else {
+                showQuizResult();
+            }
+        }, 2500);
+    }
+
+    async function showQuizResult() {
+        const pct = Math.round((quizState.correct / quizState.total) * 100);
+        const isPerfect = pct === 100;
+        
+        document.getElementById('quiz-result').style.display = 'block';
+        document.getElementById('quiz-final-score').textContent = `${quizState.correct} / ${quizState.total} (${pct}%)`;
+        document.getElementById('quiz-result-emoji').textContent = isPerfect ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '👍' : '💪';
+        
+        setTimeout(() => {
+            document.getElementById('quiz-result-bar').style.width = pct + '%';
+        }, 100);
+        
+        // Award completion XP
+        try {
+            const res = await fetch('/api/course/gamification/reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    action: isPerfect ? 'perfect_quiz' : 'quiz_complete'
+                })
+            });
+            
+            const data = await res.json();
+            if (data.success) {
+                studentData.xp   = data.totalXp;
+                studentData.coin = data.totalCoin;
+                studentData.level = data.level;
+                updateStudentUI();
+                
+                document.getElementById('quiz-result-xp').textContent = `+${data.xpGained} XP  •  +${data.coinGained} 🪙`;
+                
+                if (isPerfect) {
+                    setTimeout(() => showAchievement({
+                        icon: '💯',
+                        title: 'Perfect Score!',
+                        description: 'Kamu menjawab semua soal dengan benar!'
+                    }), 500);
+                }
+            }
+        } catch (e) {
+            console.error('Quiz complete error:', e);
+        }
+    }
+
+    function retryQuiz() {
+        quizState = { current: 0, correct: 0, total: COURSE_DATA.quiz.length };
+        document.getElementById('quiz-result').style.display = 'none';
+        
+        const questions = document.querySelectorAll('.quiz-question');
+        questions.forEach((q, i) => {
+            q.style.display = i === 0 ? 'block' : 'none';
+            q.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'wrong');
+            });
+            const exp = document.getElementById(`quiz-exp-${i}`);
+            if (exp) exp.className = 'hidden';
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // FLASHCARDS
+    // ══════════════════════════════════════════════════════════
+    function renderFlashcards() {
+        const container = document.getElementById('flashcards-container');
+        if (!COURSE_DATA.flashcards || !COURSE_DATA.flashcards.length) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-10">Belum ada flashcard.</p>';
+            return;
+        }
+        
+        const total = COURSE_DATA.flashcards.length;
+        document.getElementById('fc-progress-text').textContent = `0 / ${total}`;
+        
+        const html = COURSE_DATA.flashcards.map((fc, i) => `
+            <div class="flashcard-wrapper" data-index="${i}">
+                <div class="flashcard" onclick="flipFlashcard(this, ${i})">
+                    <div class="flashcard-front">
+                        <div class="fc-emoji">${fc.emoji || '💡'}</div>
+                        <div class="fc-text">${escapeHtml(fc.question)}</div>
+                        <div class="fc-hint">
+                            <i class="ph ph-hand-tap"></i>
+                            Tap untuk jawaban
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-3">Jawaban</div>
+                        <div class="fc-text">${escapeHtml(fc.answer)}</div>
+                        <div class="fc-hint">
+                            <i class="ph ph-arrow-counter-clockwise"></i>
+                            Tap untuk balik
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+    }
+
+    async function flipFlashcard(cardEl, idx) {
+        cardEl.classList.toggle('flipped');
+        
+        const wrapper = cardEl.closest('.flashcard-wrapper');
+        if (cardEl.classList.contains('flipped') && !viewedFlashcards.has(idx)) {
+            viewedFlashcards.add(idx);
+            wrapper.classList.add('viewed');
+            updateFlashcardProgress();
+            
+            // Award XP
+            await fetch('/api/course/gamification/reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    action: 'flashcard_viewed'
+                })
+            });
+            
+            if (viewedFlashcards.size === COURSE_DATA.flashcards.length) {
+                setTimeout(async () => {
+                    await fetch('/api/course/gamification/reward', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            courseId: COURSE_ID,
+                            action: 'all_flashcards'
+                        })
+                    });
+                    confetti({ particleCount: 100, spread: 70 });
+                }, 300);
+            }
+        }
+    }
+
+    function updateFlashcardProgress() {
+        const total = COURSE_DATA.flashcards.length;
+        const done  = viewedFlashcards.size;
+        const pct   = Math.round((done / total) * 100);
+        
+        document.getElementById('fc-progress-bar').style.width = pct + '%';
+        document.getElementById('fc-progress-text').textContent = `${done} / ${total}`;
+    }
+
+    function resetFlashcards() {
+        viewedFlashcards.clear();
+        document.querySelectorAll('.flashcard').forEach(c => c.classList.remove('flipped'));
+        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('viewed'));
+        updateFlashcardProgress();
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // LEADERBOARD
+    // ══════════════════════════════════════════════════════════
+    async function loadLeaderboard() {
+        try {
+            const res = await fetch(`/api/course/leaderboard/${COURSE_ID}`);
+            const data = await res.json();
+            if (data.success) {
+                renderLeaderboard(data.leaderboard);
+            }
+        } catch (e) {
+            console.error('Load leaderboard error:', e);
+        }
+    }
+
+    function renderLeaderboard(leaderboard) {
+        const myRank = leaderboard.find(l => l.studentId === studentData.studentId);
+        if (myRank) {
+            document.getElementById('my-rank').textContent = `#${myRank.rank}`;
+            document.getElementById('my-total-xp').textContent = myRank.xp;
+        }
+        
+        const html = leaderboard.slice(0, 10).map((student, i) => {
+            const isMe = student.studentId === studentData.studentId;
+            const medals = ['🥇', '🥈', '🥉'];
+            const medal = i < 3 ? medals[i] : '';
+            
+            return `
+                <div class="bg-white rounded-2xl p-5 border-2 ${isMe ? 'border-primary bg-indigo-50' : 'border-slate-200'} hover:shadow-lg transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl font-black ${i < 3 ? 'text-yellow-500' : 'text-slate-400'}">
+                                ${medal || '#' + student.rank}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800 ${isMe ? 'text-primary' : ''}">${escapeHtml(student.username)} ${isMe ? '(Kamu)' : ''}</div>
+                                <div class="text-sm text-slate-500">Level ${student.level} • ${student.streak}🔥 streak</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-black text-primary">${student.xp}</div>
+                            <div class="text-xs text-slate-500">XP</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        document.getElementById('leaderboard-list').innerHTML = html;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // AI TUTOR CHAT
+    // ══════════════════════════════════════════════════════════
+    function setupEventListeners() {
+        // Mobile menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        });
+        
+        document.getElementById('mobile-overlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.add('hidden');
+        });
+        
+        // AI Tutor
+        document.getElementById('ai-tutor-btn').addEventListener('click', toggleAITutor);
+        document.getElementById('close-ai-btn').addEventListener('click', toggleAITutor);
+        document.getElementById('send-btn').addEventListener('click', sendAIMessage);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendAIMessage();
+        });
+        
+        // Scroll progress
+        document.getElementById('main-scroll-area').addEventListener('scroll', handleScroll);
+    }
+
+    function toggleAITutor() {
+        const panel = document.getElementById('ai-tutor-panel');
+        panel.classList.toggle('opacity-0');
+        panel.classList.toggle('translate-y-10');
+        panel.classList.toggle('pointer-events-none');
+        
+        if (!panel.classList.contains('opacity-0')) {
+            document.getElementById('chat-input').focus();
+        }
+    }
+
+    async function sendAIMessage() {
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (!message) return;
+        
+        input.value = '';
+        appendChatMessage(message, true);
+        
+        const typingInd = document.getElementById('typing-indicator');
+        typingInd.classList.remove('hidden');
+        
+        try {
+            const res = await fetch('/api/course/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId: COURSE_ID, message })
+            });
+            
+            const data = await res.json();
+            typingInd.classList.add('hidden');
+            
+            if (data.success) {
+                appendChatMessage(data.reply, false);
+            } else {
+                appendChatMessage('Maaf, terjadi kesalahan. Coba lagi ya! 😊', false);
+            }
+        } catch (e) {
+            typingInd.classList.add('hidden');
+            appendChatMessage('Gagal terhubung. Cek koneksi internet kamu! 🌐', false);
+        }
+    }
+
+    function appendChatMessage(text, isUser) {
+        const chatBody = document.getElementById('chat-body');
+        const typingInd = document.getElementById('typing-indicator');
+        
+        const html = isUser ? `
+            <div class="flex gap-2 max-w-[88%] ml-auto justify-end animate-fadeUp">
+                <div class="bg-gradient-to-r from-primary to-secondary p-4 rounded-2xl rounded-tr-md shadow-lg text-sm text-white leading-relaxed">
+                    ${escapeHtml(text)}
+                </div>
+            </div>
+        ` : `
+            <div class="flex gap-2 max-w-[88%] animate-fadeUp">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shrink-0 text-sm shadow-md">
+                    <i class="ph-fill ph-robot"></i>
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-md shadow-md border border-slate-100 text-sm text-slate-700 leading-relaxed">
+                    ${text.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+        `;
+        
+        typingInd.insertAdjacentHTML('beforebegin', html);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // NAVIGATION & UI
+    // ══════════════════════════════════════════════════════════
+    function switchView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        document.getElementById('main-scroll-area').scrollTo(0, 0);
+        
+        if (window.innerWidth < 1024) {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.add('hidden');
+        }
+        
+        if (viewId === 'leaderboard') {
+            loadLeaderboard();
+        }
+    }
+
+    function renderBlocksNav() {
+        const nav = document.getElementById('blocks-nav');
+        if (!COURSE_DATA.learningBlocks) return;
+        
+        const html = COURSE_DATA.learningBlocks.map((block, i) => {
+            const blockId = `block-${i}`;
+            const isCompleted = completedBlocks.has(blockId);
+            
+            return `
+                <button onclick="scrollToBlock(${i})" 
+                        class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/60 transition-all text-sm group"
+                        data-block="${i}">
+                    <div class="w-8 h-8 rounded-lg ${isCompleted ? 'bg-green-500' : 'bg-slate-200'} flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                        ${isCompleted ? '✓' : block.icon || '📘'}
+                    </div>
+                    <span class="flex-1 text-slate-700 font-medium truncate">${escapeHtml(block.title)}</span>
+                </button>
+            `;
+        }).join('');
+        
+        nav.innerHTML = html;
+    }
+
+    function scrollToBlock(idx) {
+        switchView('learn');
+        setTimeout(() => {
+            const blockEl = document.getElementById(`block-${idx}`);
+            if (blockEl) {
+                blockEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+
+    function handleScroll() {
+        const el = document.getElementById('main-scroll-area');
+        const scrolled = el.scrollTop;
+        const total = el.scrollHeight - el.clientHeight;
+        const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+        
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('progress-pct').textContent = pct + '%';
+        
+        clearTimeout(progressSaveTimer);
+        progressSaveTimer = setTimeout(() => saveProgress(), 2000);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PROGRESS & AUTH
+    // ══════════════════════════════════════════════════════════
+    async function saveProgress() {
+        const el = document.getElementById('main-scroll-area');
+        const scrolled = el.scrollTop;
+        const total = el.scrollHeight - el.clientHeight;
+        const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+        
+        try {
+            await fetch('/api/course/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    scrollProgress: pct,
+                    flashcardsCompleted: viewedFlashcards.size,
+                    quizCompleted: quizState.current >= quizState.total,
+                    quizScore: quizState.correct,
+                    completedBlocks: Array.from(completedBlocks)
+                })
+            });
+        } catch (e) {
+            console.error('Save progress error:', e);
+        }
+    }
+
+    async function logout() {
+        if (!confirm('Yakin mau logout?')) return;
+        
+        try {
+            await fetch('/api/course/student/logout', { method: 'POST' });
+            window.location.href = `/course-auth/${COURSE_ID}`;
+        } catch (e) {
+            window.location.href = `/course-auth/${COURSE_ID}`;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // FEATURE: EXPLAIN LIKE I'M 5
+    // ══════════════════════════════════════════════════════════
+    function goToExam() {
+        window.location.href = `/course/${COURSE_ID}/exam`;
+    }
+    
+    async function explainSimple(blockId, blockTitle, blockType) {
+        console.log('explainSimple called:', { blockId, blockTitle, blockType });
+        
+        // Get block content
+        const blockEl = document.getElementById(blockId);
+        if (!blockEl) {
+            console.error('Block element not found:', blockId);
+            return;
+        }
+        
+        // Extract text content from block
+        let selectedText = '';
+        const blockIndex = parseInt(blockId.replace('block-', ''));
+        const blockData = COURSE_DATA.learningBlocks[blockIndex];
+        
+        console.log('Block data:', blockData);
+        
+        if (blockData) {
+            // Collect relevant text from block
+            if (blockData.explanation) selectedText += blockData.explanation + ' ';
+            if (blockData.analogy) selectedText += blockData.analogy + ' ';
+            if (blockData.keyPoints) selectedText += blockData.keyPoints.join(' ') + ' ';
+            if (blockData.realWorld) selectedText += blockData.realWorld + ' ';
+            if (blockData.connection) selectedText += blockData.connection + ' ';
+        }
+        
+        console.log('Selected text length:', selectedText.length);
+        
+        if (!selectedText.trim()) {
+            alert('Tidak ada konten untuk dijelaskan.');
+            return;
+        }
+        
+        // Show loading modal
+        showExplainModal('loading', '');
+        
+        try {
+            console.log('Sending request to /api/course/explain-simple');
+            
+            const res = await fetch('/api/course/explain-simple', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: COURSE_ID,
+                    selectedText: selectedText.substring(0, 1000), // Limit to 1000 chars
+                    blockTitle: blockTitle
+                })
+            });
+            
+            console.log('Response status:', res.status);
+            
+            if (!res.ok) {
+                console.error('HTTP error:', res.status, res.statusText);
+                throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            }
+            
+            const data = await res.json();
+            console.log('Response data:', data);
+            
+            if (!data.success) {
+                if (data.insufficientCredit) {
+                    showExplainModal('error', 'Coin tidak cukup! Kamu perlu minimal 1 coin untuk menggunakan fitur ini. Dapatkan coin dengan menyelesaikan quiz dan learning blocks.');
+                } else {
+                    showExplainModal('error', data.message || 'Gagal menjelaskan materi.');
+                }
+                return;
+            }
+            
+            // Show result
+            showExplainModal('success', data.simpleExplanation);
+            
+            // Update coin display if needed
+            if (data.newCoin !== undefined) {
+                studentData.coin = data.newCoin;
+                const coinEl = document.getElementById('student-coin');
+                if (coinEl) coinEl.textContent = data.newCoin;
+            }
+            
+            // Show XP gained notification
+            if (data.xpGained) {
+                showNotification(`+${data.xpGained} XP untuk belajar aktif! 🌟`);
+            }
+            
+        } catch (err) {
+            console.error('Explain simple error:', err);
+            showExplainModal('error', 'Terjadi kesalahan: ' + err.message + '. Coba lagi atau hubungi support jika masalah berlanjut.');
+        }
+    }
+    
+    function showExplainModal(state, content) {
+        let modal = document.getElementById('explain-modal');
+        
+        // Create modal if doesn't exist
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'explain-modal';
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6';
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-6">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-2xl font-bold text-white flex items-center gap-2">
+                                ✨ Versi Mudah Dipahami
+                            </h3>
+                            <button onclick="closeExplainModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
+                                <i class="ph ph-x text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="explain-content" class="p-6 overflow-y-auto max-h-[60vh]">
+                        <!-- Content will be injected -->
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        const contentEl = document.getElementById('explain-content');
+        
+        if (state === 'loading') {
+            contentEl.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 border-4 border-purple-200 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-slate-600 font-medium">AI sedang menjelaskan dengan bahasa yang mudah...</p>
+                    <p class="text-slate-400 text-sm mt-2">Tunggu sebentar ya! 😊</p>
+                </div>
+            `;
+        } else if (state === 'success') {
+            contentEl.innerHTML = `
+                <div class="prose prose-slate max-w-none">
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-200 mb-6">
+                        <p class="text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(content)}</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <p class="text-sm text-amber-800 flex items-center gap-2">
+                            <i class="ph-fill ph-info text-lg"></i>
+                            <span><strong>Biaya:</strong> 1 coin digunakan. <strong>Bonus:</strong> +5 XP untuk belajar aktif!</span>
+                        </p>
+                    </div>
+                </div>
+            `;
+        } else if (state === 'error') {
+            contentEl.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center text-red-500 text-3xl mx-auto mb-4">
+                        <i class="ph-fill ph-warning"></i>
+                    </div>
+                    <p class="text-red-600 font-medium">${escapeHtml(content)}</p>
+                </div>
+            `;
+        }
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.add('opacity-100'), 10);
+    }
+    
+    function closeExplainModal() {
+        const modal = document.getElementById('explain-modal');
+        if (modal) {
+            modal.classList.remove('opacity-100');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // UTILITIES
+    // ══════════════════════════════════════════════════════════
+    function showNotification(message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 z-50 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm transform translate-x-full transition-transform duration-300';
+        notification.textContent = message;
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Show notification
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // Auto-save on page leave
+    window.addEventListener('beforeunload', () => {
+        saveProgress();
+    });
+    
+    </script>
+</body>
+</html>

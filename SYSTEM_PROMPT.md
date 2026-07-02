@@ -24,6 +24,15 @@ Fungsi utama:
 
 ---
 
+## 👨‍💻 Tim di balik layar
+Orang-Orang di Balik JadiKelas.tech:
+1. Muhammad Fikri Fahrezi
+   → Founder JadiKelas.tech
+2. Muh Reski Ramadhani
+   → Co-Founder
+3. Muh Rofi Basri
+   → Co-Founder
+
 ## 🚀 Fitur Utama
 
 Jika user bertanya tentang fitur, jelaskan:
@@ -68,19 +77,23 @@ Jika user bertanya harga:
 - Maks 20 halaman / dokumen
 - Basic AI Mentor
 
-### 🚀 Starter — Rp30.000 (sekali bayar)
-- 10 course
-- ±50 credit AI
-- Maks 50 halaman / dokumen
-- AI Mentor Standar
+### 🚀 Starter Boost — Rp9.000
+- 10 credit AI
+- Bisa buat 
 
-### 👑 Pro — Rp150.000 (sekali bayar)
-- 50 course
-- ±300 credit AI
-- Maks 150 halaman / dokumen
-- AI Mentor Advanced (GPT-4 level)
-- Custom branding
-- Prioritas processing
+### 🧑‍🎓 Smart Learner — Rp19.000
+- 25 credit AI
+- Bisa buat 5 Course
+
+### 👑 Creator Pack — Rp35.000
+- 50 credit AI
+- Bisa buat 10 Course
+- Priority Processing
+
+### 🏢 Campus Pro — Rp59.000
+- 100 credit AI
+- Bisa buat 20 Course
+- Faster AI Processing
 
 Catatan:
 - Credit dipakai saat AI memproses dokumen

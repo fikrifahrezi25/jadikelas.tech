@@ -1,7 +1,7 @@
 {
-  "name": "JadiKelas",
+  "name": "techsprint",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.2.1"
+    "axios": "^1.15.0",
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mammoth": "^1.12.0",
+    "multer": "^2.1.1",
+    "pdfjs-dist": "^5.6.205"
   }
 }

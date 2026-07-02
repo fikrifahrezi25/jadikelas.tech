@@ -3,7 +3,8 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const session = require("express-session");
-const authRoutes = require("./auth");
+const authRoutes   = require("./auth");
+const courseRoutes = require("./course");
 
 const app = express();
 const PORT = 5526;
@@ -16,7 +17,12 @@ app.use(session({
     cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 hari
 }));
 app.use(express.static("public"));
+// Serve generated course HTML files
+app.use("/generated-course", express.static(path.join(__dirname, "generated-course")));
 app.use("/api", authRoutes);
+app.use("/api", courseRoutes);
+// Mount course routes without /api prefix for page routes (exam, etc)
+app.use("/", courseRoutes);
 
 const POLLINATIONS_API_KEY = "sk_RM9sUErPNlaj7kFenSIMljnIVvAyssUk";
 
@@ -45,6 +51,35 @@ app.get("/favicon.ico", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     res.sendFile(__dirname + "/public/dashboard/index.html");
+});
+
+// Serve course auth page
+app.get("/course-auth/:courseId", (req, res) => {
+    const { courseId } = req.params;
+    const filePath = path.join(__dirname, "course_template", "auth.html");
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send("Auth page not found.");
+    }
+});
+
+// Serve generated course pages (check auth first)
+app.get("/course/:courseId", (req, res) => {
+    const { courseId } = req.params;
+    
+    // Check if student is logged in for this course
+    if (!req.session.student || req.session.student.courseId !== courseId) {
+        // Redirect to auth page
+        return res.redirect(`/course-auth/${courseId}`);
+    }
+    
+    const filePath = path.join(__dirname, "generated-course", `${courseId}.html`);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send("Course tidak ditemukan.");
+    }
 });
 
 app.get("/index.html", (req, res) => {
